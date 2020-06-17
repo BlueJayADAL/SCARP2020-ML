@@ -1,6 +1,11 @@
 import argparse
+import sys
+import os.path
 
-from matt.MLP import MLP
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from matt.models.ANN import ANN
+from matt.models.MLP import MLP
 from matt.utils.helper import *
 
 
@@ -33,8 +38,11 @@ def main():
         test_set = args.dataset + "/1_test-std_set"
         challenge_set = args.dataset + "/0_test-challenge_set"
 
-    mlp = MLP(training_set, training_anno_file, test_set)
-    mlp.train_model()
+    #mlp = MLP(training_set, training_anno_file, test_set)
+    #mlp.train_model()
+
+    ann = ANN(training_set, training_anno_file, test_set)
+    ann.train_model()
 
 
 if __name__ == "__main__":
