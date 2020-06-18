@@ -37,7 +37,7 @@ class MLP:
         cm = metrics.confusion_matrix(y_test, y_pred)
         detectionRate = cm[1, 1] / (cm[1, 0] + cm[1, 1])
         falseAlarmRate = cm[0, 1] / (cm[0, 0] + cm[0, 1])
-        print("TPR: \t\t\t{:.5f}".format(detectionRate))
-        print("FAR: \t\t\t{:.5f}".format(falseAlarmRate))
+        print('TPR: \t\t\t{:.5f}'.format(detectionRate))
+        print('FAR: \t\t\t{:.5f}'.format(falseAlarmRate))
 
-        print("Mean ACC: \t\t{:.5f}".format(clf.score(X_test_scaled, y_test)))
+        print('Mean ACC: \t\t{:.5f}'.format(clf.score(X_test_scaled, y_test)))
