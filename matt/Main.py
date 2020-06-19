@@ -6,6 +6,7 @@ import tensorflow as tf
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from matt.models.ANN import ANN
+from models.CNN import CNN
 from matt.models.MLP import MLP
 from matt.models.ModelLoader import ModelLoader
 from matt.utils.helper import *
@@ -44,18 +45,26 @@ def main():
     #mlp.train_model()
 
     # Controls debug mode
-    load = True
+    load = False
+    type = 'cnn'
 
     ann = ANN(training_set, training_anno_file, test_set)
+    cnn = CNN(training_set, training_anno_file, test_set)
 
     if load:
-        ml = ModelLoader('ann_model', None)
-        loaded_model = ml.load_keras_model()
-        ann_model = ann.load_saved_model(loaded_model)
+        if type is 'ann':
+            ml = ModelLoader('ann_model', None)
+            loaded_model = ml.load_keras_model()
+            ann_model = ann.load_saved_model(loaded_model)
+        elif type is 'cnn':
+            pass
     else:
-        ann_model = ann.train_model()
-        ml = ModelLoader('ann_model', ann_model)
-        ml.save_keras_model()
+        if type is 'ann':
+            ann_model = ann.train_model()
+            ml = ModelLoader('ann_model', ann_model)
+            ml.save_keras_model()
+        elif type is 'cnn':
+            cnn_model = cnn.train_model()
 
 
 if __name__ == "__main__":

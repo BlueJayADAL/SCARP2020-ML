@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from matt.utils.helper import get_training_data
 
 
-class ANN:
+class CNN:
     def __init__(self, training_set, training_anno_file, test_set):
         self.training_set = training_set
         self.training_anno_file = training_anno_file
@@ -33,18 +33,32 @@ class ANN:
     def train_model(self):
         X_train, X_test, y_train, y_test = self.prep_training_data()
 
-        # Create ANN classifier
-        model = tf.keras.models.Sequential()
-        model.add(tf.keras.layers.Flatten())
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dense(1, activation='sigmoid'))  # Probability distribution
+        print('Original y_train shape: ', y_train.shape)
+        print('Original X_train shape: ', X_train.shape)
 
-        model.compile(optimizer='adam',
-                      loss='binary_crossentropy',  # Tries to minimize loss
+        y_train = y_train.reshape(y_train.shape[0], 1)
+        X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
+
+        print('Reshaped y_train to: ', y_train.shape)
+        print('Reshaped X_train to: ', X_train.shape)
+
+        n_timesteps, n_features, n_outputs = X_train.shape[1], X_train.shape[2], y_train.shape[1]
+
+        # Create CNN classifier
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(n_timesteps,
+                                                                                                    n_features)))
+        model.add(tf.keras.layers.Conv1D(filters=64, kernel_size=3, activation='relu'))
+        model.add(tf.keras.layers.Dropout(0.5))
+        model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dense(100, activation='relu'))
+        model.add(tf.keras.layers.Dense(n_outputs, activation='softmax'))
+        model.compile(loss='binary_crossentropy',
+                      optimizer='adam',
                       metrics=['accuracy'])
 
-        model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.1)
+        model.fit(X_train, y_train, epochs=3, batch_size=32, validation_split=0.1)
 
         return model
 
