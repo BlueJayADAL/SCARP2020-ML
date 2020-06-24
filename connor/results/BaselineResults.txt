@@ -1,23 +1,35 @@
-NetML
+NetML RF
 	My Baselines: TPR-0.99250 FAR-0.00895
 	Paper Baseline: TPR-0.9937 FAR-0.0092
 	My Baselines: F1-0.74414 mAP-0.42010
 	Paper Baseline: F1-0.7442 mAP-0.4217
 
-CICIDS	
+CICIDS RF	
 	My Baselines: TPR-0.98527 FAR-0.00484
 	Paper Baselines TPR-0.9859 FAR-0.0044
 	My Baselines: F1-0.98729 mAP-0.87034
 	Paper Baseline: F1-0.9872 mAP-0.8682
 
-Non-VPN2016 Top
+Non-VPN2016 Top RF
 	My Baselines: F1-0.62497 mAP-0.35721
 	Paper Baselines: F1-0.6273 mAP-0.3257
 
-Non-VPN2016 mid
+Non-VPN2016 mid RF
 	My Baselines: F1-0.37449 mAP-0.33237
 	Paper Baselines: F1-0.3692 mAP-0.3223
 
-Non-VPN2016 Fine
+Non-VPN2016 Fine RF
 	My Baselines: F1-0.24879 mAP-0.24311
 	Paper Baselines: F1-0.2486 mAP-0.2127
+
+NetML Logistic Regression
+	Training Score:         0.97506
+	Validation Score:       0.97449
+	TPR:                    0.97165
+	FAR:                    0.01388
+	
+Cicids2017 Logistic Regression
+	Training Score:         0.98514
+	Validation Score:       0.98588
+	TPR:                    0.97793
+	FAR:                    0.00441
