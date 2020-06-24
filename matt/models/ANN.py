@@ -25,10 +25,11 @@ class ANN:
                                                             stratify=y_train)
 
         # Preprocess the data
-        #X_train = tf.keras.utils.normalize(X_train, axis=1)
-        #X_test = tf.keras.utils.normalize(X_train, axis=1)
+        scaler = preprocessing.StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
 
-        return X_train, X_test, y_train, y_test
+        return X_train_scaled, X_test_scaled, y_train, y_test
 
     def train_model(self):
         X_train, X_test, y_train, y_test = self.prep_training_data()

@@ -1,6 +1,8 @@
 import argparse
 import sys
 import os.path
+import time
+
 import tensorflow as tf
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -45,11 +47,14 @@ def main():
     #mlp.train_model()
 
     # Controls debug mode
-    load = False
-    type = 'cnn'
+    load = True
+    type = 'ann'
+
+    start_time = time.time()
 
     ann = ANN(training_set, training_anno_file, test_set)
     cnn = CNN(training_set, training_anno_file, test_set)
+    mlp = MLP(training_set, training_anno_file, test_set)
 
     if load:
         if type is 'ann':
@@ -58,6 +63,8 @@ def main():
             ann_model = ann.load_saved_model(loaded_model)
         elif type is 'cnn':
             pass
+        elif type is 'mlp':
+            pass
     else:
         if type is 'ann':
             ann_model = ann.train_model()
@@ -65,6 +72,12 @@ def main():
             ml.save_keras_model()
         elif type is 'cnn':
             cnn_model = cnn.train_model()
+        elif type is 'mlp':
+            mlp_model = mlp.train_model()
+
+    end_time = time.time()
+
+    print("Total program execution took " + str(round(end_time - start_time, 3)) + " seconds!")
 
 
 if __name__ == "__main__":
