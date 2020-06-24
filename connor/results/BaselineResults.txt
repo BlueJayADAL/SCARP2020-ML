@@ -1,0 +1,23 @@
+NetML
+	My Baselines: TPR-0.99250 FAR-0.00895
+	Paper Baseline: TPR-0.9937 FAR-0.0092
+	My Baselines: F1-0.74414 mAP-0.42010
+	Paper Baseline: F1-0.7442 mAP-0.4217
+
+CICIDS	
+	My Baselines: TPR-0.98527 FAR-0.00484
+	Paper Baselines TPR-0.9859 FAR-0.0044
+	My Baselines: F1-0.98729 mAP-0.87034
+	Paper Baseline: F1-0.9872 mAP-0.8682
+
+Non-VPN2016 Top
+	My Baselines: F1-0.62497 mAP-0.35721
+	Paper Baselines: F1-0.6273 mAP-0.3257
+
+Non-VPN2016 mid
+	My Baselines: F1-0.37449 mAP-0.33237
+	Paper Baselines: F1-0.3692 mAP-0.3223
+
+Non-VPN2016 Fine
+	My Baselines: F1-0.24879 mAP-0.24311
+	Paper Baselines: F1-0.2486 mAP-0.2127
