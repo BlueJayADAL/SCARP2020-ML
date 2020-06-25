@@ -5,10 +5,12 @@ import time
 
 import tensorflow as tf
 
+from models.CNN1D import CNN1D
+from models.CNN2D import CNN2D
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from matt.models.ANN import ANN
-from models.CNN import CNN
 from matt.models.MLP import MLP
 from matt.models.ModelLoader import ModelLoader
 from matt.utils.helper import *
@@ -47,13 +49,14 @@ def main():
     #mlp.train_model()
 
     # Controls debug mode
-    load = True
-    type = 'ann'
+    load = False
+    type = 'cnn2d'
 
     start_time = time.time()
 
     ann = ANN(training_set, training_anno_file, test_set)
-    cnn = CNN(training_set, training_anno_file, test_set)
+    cnn1d = CNN1D(training_set, training_anno_file, test_set)
+    cnn2d = CNN2D(training_set, training_anno_file, test_set)
     mlp = MLP(training_set, training_anno_file, test_set)
 
     if load:
@@ -61,7 +64,9 @@ def main():
             ml = ModelLoader('ann_model', None)
             loaded_model = ml.load_keras_model()
             ann_model = ann.load_saved_model(loaded_model)
-        elif type is 'cnn':
+        elif type is 'cnn1d':
+            pass
+        elif type is 'cnn2d':
             pass
         elif type is 'mlp':
             pass
@@ -70,8 +75,10 @@ def main():
             ann_model = ann.train_model()
             ml = ModelLoader('ann_model', ann_model)
             ml.save_keras_model()
-        elif type is 'cnn':
-            cnn_model = cnn.train_model()
+        elif type is 'cnn1d':
+            cnn_model = cnn1d.create_model()
+        elif type is 'cnn2d':
+            cnn_model = cnn2d.create_model()
         elif type is 'mlp':
             mlp_model = mlp.train_model()
 

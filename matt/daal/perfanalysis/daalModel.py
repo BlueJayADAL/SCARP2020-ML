@@ -1,8 +1,8 @@
+import joblib
 from daal4py import logistic_regression_training, logistic_regression_prediction
 from daal4py import decision_forest_classification_training, decision_forest_classification_prediction
 from daal4py import svm_training, svm_prediction, kernel_function_linear
 from tensorflow import keras
-from sklearn.externals import joblib
 from operator import itemgetter
 import numpy as np
 import random
