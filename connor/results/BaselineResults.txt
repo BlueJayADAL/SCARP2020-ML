@@ -1,35 +1,107 @@
-NetML RF
+NetML
 	My Baselines: TPR-0.99250 FAR-0.00895
 	Paper Baseline: TPR-0.9937 FAR-0.0092
 	My Baselines: F1-0.74414 mAP-0.42010
 	Paper Baseline: F1-0.7442 mAP-0.4217
 
-CICIDS RF	
+CICIDS	
 	My Baselines: TPR-0.98527 FAR-0.00484
 	Paper Baselines TPR-0.9859 FAR-0.0044
 	My Baselines: F1-0.98729 mAP-0.87034
 	Paper Baseline: F1-0.9872 mAP-0.8682
 
-Non-VPN2016 Top RF
+Non-VPN2016 Top
 	My Baselines: F1-0.62497 mAP-0.35721
 	Paper Baselines: F1-0.6273 mAP-0.3257
 
-Non-VPN2016 mid RF
+Non-VPN2016 mid
 	My Baselines: F1-0.37449 mAP-0.33237
 	Paper Baselines: F1-0.3692 mAP-0.3223
 
-Non-VPN2016 Fine RF
+Non-VPN2016 Fine
 	My Baselines: F1-0.24879 mAP-0.24311
 	Paper Baselines: F1-0.2486 mAP-0.2127
 
-NetML Logistic Regression
-	Training Score:         0.97506
-	Validation Score:       0.97449
-	TPR:                    0.97165
-	FAR:                    0.01388
-	
-Cicids2017 Logistic Regression
-	Training Score:         0.98514
-	Validation Score:       0.98588
-	TPR:                    0.97793
-	FAR:                    0.00441
+NetML MLP MD
+Training Score:         0.99686
+Validation Score:       0.99638
+TPR:                    0.99849
+FAR:                    0.01224
+Confusion matrix is saved as ./results/20200624-160200/CM.png
+
+Iteration 3182, loss = 0.01279291
+
+Cicids MLP MD
+Training Score:         0.99226
+Validation Score:       0.98996
+TPR:                    0.98832
+FAR:                    0.00804
+
+NetML -f MLP Classification
+	Training Score:         0.76824
+	Validation Score:       0.76656
+	F1:                     0.75217
+	mAP:                    0.41342
+	5369k iterations
+
+CICIDS -f MLP Classification
+	Training Score:         0.99208
+	Validation Score:       0.99058
+	F1:                     0.99069
+	mAP:                    0.92724
+	2k iterations
+
+non-vpn top MLP classification
+	Training Score:         0.72995
+	Validation Score:       0.71583
+	F1:                     0.62392
+	mAP:                    0.27374
+
+non-vpn mid MLP classification
+	Training Score:         0.45476
+	Validation Score:       0.44463
+	F1:                     0.36984
+	mAP:                    0.21906
+	5.5k iterations
+
+non-vpn fine MLP classification
+	Training Score:         0.34306
+	Validation Score:       0.33151
+	F1:                     0.23179
+	mAP:                    0.12590
+
+NetML LR MD
+	TPR:			0.97165
+	FAR:			0.01388
+
+cicids LR MD
+	TPR:			0.97793
+	FAR:			0.00441
+NetML LR fine classification
+
+CICIDS LR fine Classification
+
+Non-vpn top LR classification
+	Training Score:         0.70067
+	Validation Score:       0.69965
+	F1:                     0.59258
+	mAP:                    0.20274
+Non-vpn mid LR classification
+	Training Score:         0.43289
+	Validation Score:       0.42971
+	F1:                     0.35772
+	AP:                     0.16016
+Non-vpn fine LR classification
+	Training Score:         0.31994
+	Validation Score:       0.31278
+	F1:                     0.23431
+	mAP:                    0.11630
+
+NetML SVM Top
+	Validation Score:       0.98271
+	TPR:                    0.99100
+	FAR:                    0.05125
+Non-vpn svm fine
+	Validation Score:       0.33716
+	F1:                     0.24164
+	mAP:                    0.21118
