@@ -47,7 +47,7 @@ class LR:
 		#train model
 		#print("Training model...")
 		trainResult = trainAlg.compute(trainData, trainLabel)
-		#create prediction classes
+		#create prediction classes 0.
 		predictAlgTrain = logistic_regression_prediction(nClasses=nClasses)
 		predictAlgTest = logistic_regression_prediction(nClasses=nClasses)
 		#make train and test predictions

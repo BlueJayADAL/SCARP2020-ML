@@ -80,13 +80,13 @@ def read_json_gz(jsonFilename, featureDict=None):
                 sample = json.loads(flow)
                 data.append(sample)
             except:
-            	pb_dataline.append(i)
+                pb_dataline.append(i)
                 #print("Line {} has invalid character. Skipped ...".format(i))
         if len(pb_dataline) != 0:
             print("Total {} lines were skipped because of invalid characters.".format(len(pb_dataline)))
 
         if featureDict is None:
-            with open("./utils/featureDict_META.json", 'r') as js:
+            with open("matt/utils/featureDict_META.json", 'r') as js: # Might cause an error due to path
                 featureDict = json.load(js)
 
         # Create an empty numpy array of arbitrarily but sufficiently large (2048) in terms of columns

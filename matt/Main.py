@@ -3,8 +3,6 @@ import sys
 import os.path
 import time
 
-import tensorflow as tf
-
 from models.CNN1D import CNN1D
 from models.CNN2D import CNN2D
 
@@ -45,12 +43,14 @@ def main():
         test_set = args.dataset + "/1_test-std_set"
         challenge_set = args.dataset + "/0_test-challenge_set"
 
+    #python Main.py --dataset ./data/NetML --anno top --submit test-std
+
     #mlp = MLP(training_set, training_anno_file, test_set)
     #mlp.train_model()
 
     # Controls debug mode
     load = False
-    type = 'cnn2d'
+    type = 'cnn1d'
 
     start_time = time.time()
 
@@ -60,14 +60,19 @@ def main():
     mlp = MLP(training_set, training_anno_file, test_set)
 
     if load:
-        if type is 'ann':
+        if type is 'mlp':
+            pass
             ml = ModelLoader('ann_model', None)
             loaded_model = ml.load_keras_model()
             ann_model = ann.load_saved_model(loaded_model)
         elif type is 'cnn1d':
-            pass
+            ml = ModelLoader('cnn1d_model', None)
+            loaded_model = ml.load_keras_model()
+            cnn1d_model = cnn1d.load_saved_model(loaded_model)
         elif type is 'cnn2d':
-            pass
+            ml = ModelLoader('cnn2d_model', None)
+            loaded_model = ml.load_keras_model()
+            cnn2d_model = cnn2d.load_saved_model(loaded_model)
         elif type is 'mlp':
             pass
     else:
@@ -76,9 +81,13 @@ def main():
             ml = ModelLoader('ann_model', ann_model)
             ml.save_keras_model()
         elif type is 'cnn1d':
-            cnn_model = cnn1d.create_model()
+            cnn1d_model = cnn1d.create_model()
+            ml = ModelLoader('ann_model', cnn1d_model)
+            ml.save_keras_model()
         elif type is 'cnn2d':
-            cnn_model = cnn2d.create_model()
+            cnn2d_model = cnn2d.create_model()
+            ml = ModelLoader('ann_model', cnn2d_model)
+            ml.save_keras_model()
         elif type is 'mlp':
             mlp_model = mlp.train_model()
 

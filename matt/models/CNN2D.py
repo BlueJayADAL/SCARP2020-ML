@@ -6,6 +6,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential, Model, model_from_json
 from tensorflow.keras.layers import Input, Dense, Dropout, concatenate, Flatten, Conv2D, MaxPooling2D
+from tensorflow_core.python.autograph.pyct import anno
 
 from utils.helper2 import read_dataset, one_hot
 
@@ -16,17 +17,7 @@ class CNN2D:
         self.training_anno_file = training_anno_file
         self.test_set = test_set
 
-    def create_model(self):
-        dataset = "./data/NetML"  # "./data/non-vpn2016" or "./data/CICIDS2017" or "./data/non-vpn2016"
-        anno = "top"  # or "mid" or "fine"
-        # submit = "both" # or "test-std" or "test-challenge"
-
-        # Assign variables
-        training_set = dataset + "/2_training_set"
-        training_anno_file = dataset + "/2_training_annotations/2_training_anno_" + anno + ".json.gz"
-        test_set = dataset + "/1_test-std_set"
-        challenge_set = dataset + "/0_test-challenge_set"
-
+    def prep_training_data(self):
         # TLS, DNS, HTTP features included?
         TLS, DNS, HTTP = {}, {}, {}
         TLS['tlsOnly'] = False  # returns
@@ -42,30 +33,30 @@ class CNN2D:
         ##
         ##
 
-        # Get training data in np.array format
-        # Xtrain, ytrain, class_label_pair, _ = get_training_data(training_set, training_anno_file)
-        # annotationFileName = [dataset+"/2_training_annotations/2_training_anno_top.json.gz", dataset+"/2_training_annotations/2_training_anno_fine.json.gz"]
-        annotationFileName = dataset + "/2_training_annotations/2_training_anno_top.json.gz"
-        feature_names, ids, Xtrain, ytrain, class_label_pairs = read_dataset(training_set,
-                                                                             annotationFileName=annotationFileName,
+        feature_names, ids, Xtrain, ytrain, class_label_pairs = read_dataset(self.training_set,
+                                                                             annotationFileName=self.training_anno_file,
                                                                              TLS=TLS, class_label_pairs=None)
 
         # Split validation set from training data
         X_train, X_test, y_train, y_test = train_test_split(Xtrain, ytrain,
-                                                          test_size=0.2,
-                                                          random_state=42,
-                                                          stratify=ytrain)
+                                                            test_size=0.2,
+                                                            random_state=42,
+                                                            stratify=ytrain)
 
         # Preprocess the data
         scaler = preprocessing.StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
 
+        return X_train_scaled, X_test_scaled, y_train, y_test, class_label_pairs
+
+    def create_model(self):
+        X_train_scaled, X_test_scaled, y_train, y_test, class_label_pairs = self.prep_training_data()
+
         # Get name of each class to display in confusion matrix
         top_class_names = list(sorted(class_label_pairs.keys()))
         # fine_class_names = list(sorted(class_label_pairs_list[1].keys()))
 
-        # Get model
         # Default Training Hyperparameters
         n_classes_top = len(top_class_names)
         # n_classes_fine = len(fine_class_names)
@@ -73,15 +64,12 @@ class CNN2D:
         decay_rate = 1e-5
         dropout_rate = 0.5
         n_batch = 64
-        n_epochs = 10  # Loop 500 times on the dataset
+        n_epochs = 1  # Loop 500 times on the dataset
         filters = 128
         kernel_size = 4
         strides = 1
         CNN_layers = 2
         clf_reg = 1e-5
-
-        print("X_train shape", X_train_scaled.shape)
-        print("X_test shape", X_test_scaled.shape)
 
         # Model Definition
         X_train_2D = X_train_scaled.reshape(-1, 9, 19, 1)  # reshape 171 to 9x19
@@ -100,12 +88,14 @@ class CNN2D:
                             validation_data=(X_val_2D, one_hot(y_test, n_classes_top)))
 
     def train_model(self, X_train, OUTPUT,
-                      filters=64,
-                      kernel_size=3,
-                      strides=1,
-                      dropout_rate=0.,
-                      CNN_layers=2,
-                      clf_reg=1e-4):
+                    filters=64,
+                    kernel_size=3,
+                    strides=1,
+                    dropout_rate=0.,
+                    CNN_layers=2,
+                    clf_reg=1e-4,
+                    learning_rate=1e-3,
+                    decay_rate=1e-5):
         # Model Definition
         OUTPUTS = []
         # raw_inputs = Input(shape=(X_train.shape[1],))
@@ -175,17 +165,25 @@ class CNN2D:
 
         model = Model(inputs=raw_inputs, outputs=OUTPUTS)
 
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
+                      metrics=['accuracy'])
+
         return model
 
 
     def load_saved_model(self, loaded_model):
-        X_train, X_test, y_train, y_test = self.prep_training_data()
+        X_train_scaled, X_test_scaled, y_train, y_test, class_label_pairs = self.prep_training_data()
 
-        loaded_model.compile(optimizer='adam',
-                      loss='binary_crossentropy',  # Tries to minimize loss
+        # Base settings for learning
+        learning_rate = 1e-3
+        decay_rate = 1e-5
+
+        loaded_model.compile(loss='categorical_crossentropy',
+                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
                       metrics=['accuracy'])
 
-        score = loaded_model.evaluate(X_test, y_test, verbose=0)
+        score = loaded_model.evaluate(X_test_scaled, y_test, verbose=0)
 
         print('%s: %.2f%%' % (loaded_model.metrics_names[1], score[1]*100))
 
