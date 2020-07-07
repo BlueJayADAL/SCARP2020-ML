@@ -1,18 +1,13 @@
 import argparse
-import os
 import time
-import random
 
-import joblib
 from _daal4py import logistic_regression_training, logistic_regression_prediction, \
     decision_forest_classification_prediction, decision_forest_classification_training, kernel_function_linear, \
     svm_training, svm_prediction
 import numpy as np
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
+from tensorflow import keras
 
 from matt.models.ModelLoader import ModelLoader
-from matt.utils.helper import get_training_data
 from utils.helper import read_csv_dataset
 
 
@@ -35,8 +30,8 @@ def main():
         print(
             "NetML and CICIDS2017 datasets cannot be trained with mid-level annotations. Please use either top or fine.")
         return
-    elif args.model not in ["lr", "df", "svm"]:
-        print("Please select one of these for model: {lr, df, svm}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "ann"]:
+        print("Please select one of these for model: {lr, df, svm, ann}. e.g. --model lr")
         return
     else:
         if args.dataset is "NetML":
@@ -56,6 +51,9 @@ def main():
         elif args.model == 'svm':
             svm_daal = SVM(data, labels)
             svm_daal.train()
+        elif args.model == 'ann':
+            ann_daal = ANN(data, labels)
+            ann_daal.train()
 
         # python daalModels.py --dataset NetML --anno top --model lr
 
@@ -63,8 +61,8 @@ class LR:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
-        self.X_train_scaled = None
-        self.X_test_scaled = None
+        self.X_train = None
+        self.X_test = None
         self.y_train = None
         self.y_test = None
 
@@ -73,7 +71,7 @@ class LR:
 
     def prep_data(self):
         """
-        Sets X_train_scaled, X_test_scaled, y_train, and y_test variables for training / testing.
+        Sets X_train, X_test, y_train, and y_test variables for training / testing.
         Run this method to reset values
         """
         # Reshape labels
@@ -84,9 +82,9 @@ class LR:
         mark = 0.8
         upperBound = int(dataLen * mark)
 
-        self.X_train_scaled = self.data[0:upperBound]
+        self.X_train = self.data[0:upperBound]
         self.y_train = self.labels[0:upperBound]
-        self.X_test_scaled = self.data[upperBound:]
+        self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
     def train(self,
@@ -101,14 +99,14 @@ class LR:
         trainAlg = logistic_regression_training(nClasses=nClasses, interceptFlag=True)
 
         # Train model
-        trainResult = trainAlg.compute(self.X_train_scaled,
+        trainResult = trainAlg.compute(self.X_train,
                                        self.y_train)
         # Create prediction classes 0.
         predictAlgTrain = logistic_regression_prediction(nClasses=nClasses)
         predictAlgTest = logistic_regression_prediction(nClasses=nClasses)
         # Make train and test predictions
-        predictResultTrain = predictAlgTrain.compute(self.X_train_scaled, trainResult.model)
-        predictResultTest = predictAlgTest.compute(self.X_test_scaled, trainResult.model)
+        predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
+        predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
 
         # End train timing
         endTime = time.time()
@@ -138,7 +136,7 @@ class LR:
         # create prediction class
         predictAlg = logistic_regression_prediction(nClasses=2)
         # make predictions
-        predictResultTest = predictAlg.compute(self.X_test_scaled, loaded_model)
+        predictResultTest = predictAlg.compute(self.X_test, loaded_model)
         endTime = time.time()
         print("Test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
         # assess accuracy
@@ -154,8 +152,8 @@ class DF:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
-        self.X_train_scaled = None
-        self.X_test_scaled = None
+        self.X_train = None
+        self.X_test = None
         self.y_train = None
         self.y_test = None
 
@@ -164,7 +162,7 @@ class DF:
 
     def prep_data(self):
         """
-        Sets X_train_scaled, X_test_scaled, y_train, and y_test variables for training / testing.
+        Sets X_train, X_test, y_train, and y_test variables for training / testing.
         Run this method to reset values
         """
         # Reshape labels
@@ -176,9 +174,9 @@ class DF:
         mark = 0.8
         upperBound = int(dataLen * mark)
 
-        self.X_train_scaled = self.data[0:upperBound]
+        self.X_train = self.data[0:upperBound]
         self.y_train = self.labels[0:upperBound]
-        self.X_test_scaled = self.data[upperBound:]
+        self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
     def train(self,
@@ -188,14 +186,17 @@ class DF:
 
         # Decision Forest
         trainAlg = decision_forest_classification_training(2, nTrees=100, maxTreeDepth=0)
+
         # Train model
-        trainResult = trainAlg.compute(self.X_train_scaled, self.y_train)
+        trainResult = trainAlg.compute(self.X_train, self.y_train)
+
         # Create prediction classes
         predictAlgTrain = decision_forest_classification_prediction(2)
         predictAlgTest = decision_forest_classification_prediction(2)
+
         # Make train and test predictions
-        predictResultTrain = predictAlgTrain.compute(self.X_train_scaled, trainResult.model)
-        predictResultTest = predictAlgTest.compute(self.X_test_scaled, trainResult.model)
+        predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
+        predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
 
         # End train timing
         endTime = time.time()
@@ -204,9 +205,9 @@ class DF:
         correctTrain = np.sum(self.y_train.flatten() == predictResultTrain.prediction.flatten())
         correctTest = np.sum(self.y_test.flatten() == predictResultTest.prediction.flatten())
 
-        # compare train predictions
+        # Compare train predictions
         trainAccu = float(correctTrain) / len(self.y_train) * 100
-        # compare test predictions
+        # Compare test predictions
         testAccu = float(correctTest) / len(self.y_test) * 100
 
         print("Training and test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
@@ -222,24 +223,32 @@ class DF:
         self.load_saved_model(loaded_model)
 
     def load_saved_model(self, loaded_model):
+        # Begin test timing
         startTime = time.time()
+
         # Create prediction class
         predictAlg = decision_forest_classification_prediction(2)
-        # Make predictions
-        predictResultTest = predictAlg.compute(self.X_test_scaled, loaded_model)
+
+        # make predictions
+        predictResultTest = predictAlg.compute(self.X_test, loaded_model)
+
+        # End test timing
         endTime = time.time()
-        print("Test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
+
+        # Assess accuracy
         correctTest = np.sum(self.y_test == predictResultTest.prediction.flatten())
-        print("Loaded Test accuracy: ", float(correctTest) / len(self.y_test) * 100)
+        testAccu = float(correctTest) / len(self.y_test) * 100
+
+        print("Test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test accuracy: ", testAccu)
 
 
 class SVM:
-    def __init__(self, training_set, training_anno_file, test_set):
-        self.training_set = training_set
-        self.training_anno_file = training_anno_file
-        self.test_set = test_set
-        self.X_train_scaled = None
-        self.X_test_scaled = None
+    def __init__(self, data, labels):
+        self.data = data
+        self.labels = labels
+        self.X_train = None
+        self.X_test = None
         self.y_train = None
         self.y_test = None
 
@@ -248,30 +257,24 @@ class SVM:
 
     def prep_data(self):
         """
-        Sets X_train_scaled, X_test_scaled, y_train, and y_test variables for training / testing.
+        Sets X_train, X_test, y_train, and y_test variables for training / testing.
         Run this method to reset values
         """
-        # Get training data in np.array format
-        X_train, y_train, class_label_pair, X_train_ids = get_training_data(self.training_set, self.training_anno_file)
+        # make 0 values -1
+        self.labels = [-1 if i == 0 else 1 for i in self.labels]
 
-        # Split validation set from training data
-        X_train, X_test, y_train, y_test = train_test_split(X_train, y_train,
-                                                            test_size=0.2,
-                                                            random_state=1,
-                                                            stratify=y_train)
+        # Reshape labels
+        self.labels = np.array(self.labels).reshape((len(self.labels), 1))
 
-        # Preprocess the data
-        scaler = preprocessing.StandardScaler()
-        self.X_train_scaled = scaler.fit_transform(X_train)
-        self.X_test_scaled = scaler.transform(X_test)
+        # Setup train / test data
+        dataLen = len(self.data)
+        mark = 0.8
+        upperBound = int(dataLen * mark)
 
-        # Change from 0/1 to -1/1 for SVM classifier
-        y_train[y_train == 0] = -1
-        y_test[y_test == 0] = -1
-
-        # Reshape y_train and y_test
-        self.y_train = y_train.reshape(y_train.shape[0], 1)
-        self.y_test = y_test.reshape(y_test.shape[0], 1)
+        self.X_train = self.data[0:upperBound]
+        self.y_train = self.labels[0:upperBound]
+        self.X_test = self.data[upperBound:]
+        self.y_test = self.labels[upperBound:]
 
     def train(self,
               save_model=True):
@@ -283,15 +286,15 @@ class SVM:
         trainAlg = svm_training(nClasses=2, C=1e+6, maxIterations=1e+7, cacheSize=2000, kernel=kern,
                                 accuracyThreshold=1e-3, doShrinking=True)
         # Train model
-        trainResult = trainAlg.compute(self.X_train_scaled, self.y_train)
+        trainResult = trainAlg.compute(self.X_train, self.y_train)
 
         # Create prediction classes
         predictAlgTrain = svm_prediction(nClasses=2, kernel=kern)
         predictAlgTest = svm_prediction(nClasses=2, kernel=kern)
 
         # Make train and test predictions
-        predictResultTrain = predictAlgTrain.compute(self.X_train_scaled, trainResult.model)
-        predictResultTest = predictAlgTest.compute(self.X_test_scaled, trainResult.model)
+        predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
+        predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
 
         # End train timing
         endTime = time.time()
@@ -313,5 +316,37 @@ class SVM:
         print("Training and test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("Train accuracy: ", trainAccu)
         print("Test accuracy: ", testAccu)
+
+        if save_model:
+            ml = ModelLoader('daal_SVM', trainResult.model)
+            ml.save_daal_model()
+
+        ml = ModelLoader('daal_SVM', None)
+        loaded_model = ml.load_daal_model()
+        self.load_saved_model(loaded_model)
+
+    def load_saved_model(self, loaded_model):
+        # Begin test timing
+        startTime = time.time()
+
+        # create prediction class
+        kern = kernel_function_linear(method='defaultDense')
+        predictAlg = svm_prediction(nClasses=2, kernel=kern)
+
+        # make predictions
+        predictResultTest = predictAlg.compute(self.X_test, loaded_model)
+
+        # End test timing
+        endTime = time.time()
+
+        # assess accuracy
+        predictions = predictResultTest.prediction.flatten()
+        correctTest = np.sum(
+            np.logical_or(np.logical_and(self.y_test > 0, predictions > 0), np.logical_and(self.y_test < 0, predictions < 0)))
+        testAccu = float(correctTest) / len(self.y_test) * 100
+
+        print("Test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test accuracy: ", testAccu)
+
 
 main()
