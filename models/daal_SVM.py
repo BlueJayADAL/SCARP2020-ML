@@ -83,7 +83,7 @@ class daal_SVM:
 
         # Collect statistics
         train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictionsTrain)
-        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictionsTest)
+        test_tpr, test_far, test_accu,test_report = collect_statistics(testLabel, predictionsTest)
 
         print("Training and test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
@@ -94,6 +94,7 @@ class daal_SVM:
         print("Test accuracy: ", testAccu)
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
+        print(test_report)
         print("------------------------")
 
         if save_model:

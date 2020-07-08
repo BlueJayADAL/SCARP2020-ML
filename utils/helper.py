@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-
+from sklearn.metrics import classification_report
 
 def read_csv_dataset(fileName):
     # Read dataset from csv and shuffle it into random order
@@ -19,5 +19,6 @@ def collect_statistics(y_true, y_pred):
     falseAlarmRate = cm[0, 1] / (cm[0, 0] + cm[0, 1])
     correct = np.sum(y_true == y_pred)
     accu = float(correct) / len(y_true) * 100
+    class_report = classification_report(y_true, y_pred)
 
     return detectionRate, falseAlarmRate, accu

@@ -15,7 +15,7 @@ def main():
     parser.add_argument('-d', '--dataset', action="store", help="Dataset")
     parser.add_argument('-m', '--model', action="store")
     parser.add_argument('-l', '--load', action="store")
-
+    parser.add_argument('-r', '--runs', action="store", help="how many runs?")
     args = parser.parse_args()
 
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
@@ -27,6 +27,9 @@ def main():
     elif args.load not in ["true", "false"]:
         args.load = False
     else:
+        # run_num is amout of times model is going to be tested
+        run_num = args.runs
+        run_num = int(run_num)
         if args.load is not False:
             # Convert load argument to boolean
             args.load = bool(util.strtobool(args.load))
