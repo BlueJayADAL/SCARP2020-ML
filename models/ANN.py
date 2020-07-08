@@ -1,7 +1,10 @@
+import time
+
 import numpy as np
 import tensorflow as tf
 
-from matt.models.ModelLoader import ModelLoader
+from utils.helper import collect_statistics
+from models.ModelLoader import ModelLoader
 
 
 class ANN:
@@ -19,8 +22,8 @@ class ANN:
         # Reshape labels
         self.labels = np.array(self.labels).reshape((len(self.labels), 1))
 
+        # Convert from dataframe to np.array
         self.data = self.data.values
-
 
         # Setup train / test data
         dataLen = len(self.data)
@@ -49,23 +52,35 @@ class ANN:
 
         if save_model:
             # Save model to disk
-            ml = ModelLoader('ann_model', model)
+            ml = ModelLoader('model_ann', model)
             ml.save_keras_model()
-
-            # Load model from disk and test
-            loaded_model = ml.load_keras_model()
-            self.load_saved_model(loaded_model)
 
     def load_saved_model(self, loaded_model):
         """
         Compiles loaded model and tests for accuracy
         """
+        # Begin test timing
+        startTime = time.time()
+
         loaded_model.compile(optimizer='adam',
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
         score = loaded_model.evaluate(self.X_test, self.y_test, verbose=0)
 
-        print('%s: %.2f%%' % (loaded_model.metrics_names[1], score[1]*100))
+        testAccu = loaded_model.metrics_names[1], score[1]*100
 
-        return loaded_model
+        # End test timing
+        endTime = time.time()
+
+        y_pred = loaded_model.predict_classes(self.X_test)
+
+        # Collect statistics
+        test_tpr, test_far, test_accu = collect_statistics(self.y_test.flatten(), y_pred.flatten())
+
+        print("Test (ANN) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", testAccu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")

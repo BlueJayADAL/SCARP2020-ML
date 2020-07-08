@@ -1,10 +1,12 @@
 import argparse
 
+from models.ModelLoader import ModelLoader
 from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
 from models.daal_SVM import daal_SVM
 from models.ANN import ANN
 from utils.helper import read_csv_dataset
+from distutils import util
 
 
 def main():
@@ -12,6 +14,7 @@ def main():
                                      add_help=True)
     parser.add_argument('-d', '--dataset', action="store", help="Dataset")
     parser.add_argument('-m', '--model', action="store")
+    parser.add_argument('-l', '--load', action="store")
 
     args = parser.parse_args()
 
@@ -21,7 +24,12 @@ def main():
     elif args.model not in ["lr", "df", "svm", "ann"]:
         print("Please select one of these for model: {lr, df, svm, ann}. e.g. --model lr")
         return
+    elif args.load not in ["true", "false"]:
+        args.load = False
     else:
+        if args.load is not False:
+            # Convert load argument to boolean
+            args.load = bool(util.strtobool(args.load))
         # If all arguments are succsessful
 
         # Choose correct dataset via paths below
@@ -35,22 +43,54 @@ def main():
 
         # Train respective model
         if args.model == 'lr':
+            # Setup LR model
             lr_daal = daal_LR(data, labels)
-            lr_daal.train()
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('daal_LR', None)
+                loaded_model = ml.load_daal_model()
+                lr_daal.load_saved_model(loaded_model)
+            else:
+                lr_daal.train()
         elif args.model == 'df':
+            # Setup DF model
             df_daal = daal_DF(data, labels)
-            df_daal.train()
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('daal_DF', None)
+                loaded_model = ml.load_daal_model()
+                df_daal.load_saved_model(loaded_model)
+            else:
+                df_daal.train()
         elif args.model == 'svm':
+            # Setup SVM model
             svm_daal = daal_SVM(data, labels)
-            svm_daal.train()
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('daal_SVM', None)
+                loaded_model = ml.load_daal_model()
+                svm_daal.load_saved_model(loaded_model)
+            else:
+                svm_daal.train()
 
         # Non DAAL models can be found below
 
         elif args.model == 'ann':
+            # Setup ANN model
             ann_model = ANN(data, labels)
-            ann_model.train()
 
-        # python daalModels.py --dataset NetML --model lr
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_ann', None)
+                loaded_model = ml.load_keras_model()
+                ann_model.load_saved_model(loaded_model)
+            else:
+                ann_model.train()
+
+        # python daalModels.py --dataset NetML --model lr --load false
 
 
 main()

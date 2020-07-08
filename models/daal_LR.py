@@ -3,7 +3,8 @@ import numpy as np
 
 from _daal4py import logistic_regression_training, logistic_regression_prediction
 
-from matt.models.ModelLoader import ModelLoader
+from utils.helper import collect_statistics
+from models.ModelLoader import ModelLoader
 
 
 class daal_LR:
@@ -60,38 +61,51 @@ class daal_LR:
         # End train timing
         endTime = time.time()
 
-        # Sum prediction results
-        correctTrain = np.sum(self.y_train.flatten() == predictResultTrain.prediction.flatten())
-        correctTest = np.sum(self.y_test.flatten() == predictResultTest.prediction.flatten())
-        # Compare train predictions
-        trainAccu = float(correctTrain) / len(self.y_train) * 100
-        # Compare test predictions
-        testAccu = float(correctTest) / len(self.y_test) * 100
+        # Flatten y values
+        trainLabel = self.y_train.flatten()
+        testLabel = self.y_test.flatten()
+
+        # Collect statistics
+        train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
         print("Training and test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
-        print("Train accuracy: ", trainAccu)
-        print("Test accuracy: ", testAccu)
+        print("--- Training Results ---")
+        print("Train accuracy: ", train_accu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")
 
         if save_model:
             ml = ModelLoader('daal_LR', trainResult.model)
             ml.save_daal_model()
 
-        ml = ModelLoader('daal_LR', None)
-        loaded_model = ml.load_daal_model()
-        self.load_saved_model(loaded_model)
-
     def load_saved_model(self, loaded_model):
+        # Begin test timing
         startTime = time.time()
-        # create prediction class
+
+        # Flatten y
+        testLabel = self.y_test.flatten()
+
+        # Create prediction class
         predictAlg = logistic_regression_prediction(nClasses=2)
-        # make predictions
+
+        # Make predictions
         predictResultTest = predictAlg.compute(self.X_test, loaded_model)
+
+        # End test timing
         endTime = time.time()
+
+        # Collect statistics
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+
         print("Test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
-        # assess accuracy
-        count = 0
-        for i in range(0, len(self.y_test)):
-            if self.y_test[i] == predictResultTest.prediction[i]:
-                count += 1
-        print("Test (Logistic Regression) has a test accuracy of ", float(count) / len(self.y_test) * 100)
-        # return float(count) / len(self.y_test) * 100
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")

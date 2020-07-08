@@ -3,7 +3,8 @@ import time
 import numpy as np
 from _daal4py import decision_forest_classification_training, decision_forest_classification_prediction
 
-from matt.models.ModelLoader import ModelLoader
+from utils.helper import collect_statistics
+from models.ModelLoader import ModelLoader
 
 
 class daal_DF:
@@ -59,30 +60,35 @@ class daal_DF:
         # End train timing
         endTime = time.time()
 
-        # Sum prediction results
-        correctTrain = np.sum(self.y_train.flatten() == predictResultTrain.prediction.flatten())
-        correctTest = np.sum(self.y_test.flatten() == predictResultTest.prediction.flatten())
+        # Flatten y values
+        trainLabel = self.y_train.flatten()
+        testLabel = self.y_test.flatten()
 
-        # Compare train predictions
-        trainAccu = float(correctTrain) / len(self.y_train) * 100
-        # Compare test predictions
-        testAccu = float(correctTest) / len(self.y_test) * 100
+        # Collect statistics
+        train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
         print("Training and test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
-        print("Train accuracy: ", trainAccu)
-        print("Test accuracy: ", testAccu)
+        print("--- Training Results ---")
+        print("Train accuracy: ", train_accu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")
 
         if save_model:
             ml = ModelLoader('daal_DF', trainResult.model)
             ml.save_daal_model()
 
-        ml = ModelLoader('daal_DF', None)
-        loaded_model = ml.load_daal_model()
-        self.load_saved_model(loaded_model)
-
     def load_saved_model(self, loaded_model):
         # Begin test timing
         startTime = time.time()
+
+        # Flatten y
+        testLabel = self.y_test.flatten()
 
         # Create prediction class
         predictAlg = decision_forest_classification_prediction(2)
@@ -97,5 +103,12 @@ class daal_DF:
         correctTest = np.sum(self.y_test.flatten() == predictResultTest.prediction.flatten())
         testAccu = float(correctTest) / len(self.y_test) * 100
 
+        # Collect statistics
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+
         print("Test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
-        print("Test accuracy: ", testAccu)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")

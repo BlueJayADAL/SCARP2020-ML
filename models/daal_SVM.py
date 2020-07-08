@@ -3,7 +3,8 @@ import time
 import numpy as np
 from _daal4py import svm_training, kernel_function_linear, svm_prediction
 
-from matt.models.ModelLoader import ModelLoader
+from utils.helper import collect_statistics
+from models.ModelLoader import ModelLoader
 
 
 class daal_SVM:
@@ -62,35 +63,49 @@ class daal_SVM:
         # End train timing
         endTime = time.time()
 
+        # Flatten y
+        trainLabel = self.y_train.flatten()
+        testLabel = self.y_test.flatten()
+
         # Compare train predictions
         predictionsTrain = predictResultTrain.prediction.flatten()
-        trainLabel = self.y_train.flatten()
+
         correctTrain = np.sum(np.logical_or(np.logical_and(trainLabel > 0, predictionsTrain > 0),
                                             np.logical_and(trainLabel < 0, predictionsTrain < 0)))
         trainAccu = float(correctTrain) / len(trainLabel) * 100
 
         # Compare test predictions
         predictionsTest = predictResultTest.prediction.flatten()
-        testLabel = self.y_test.flatten()
+
         correctTest = np.sum(np.logical_or(np.logical_and(testLabel > 0, predictionsTest > 0),
                                            np.logical_and(testLabel < 0, predictionsTest < 0)))
         testAccu = float(correctTest) / len(testLabel) * 100
 
+        # Collect statistics
+        train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictionsTrain)
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictionsTest)
+
         print("Training and test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Training Results ---")
         print("Train accuracy: ", trainAccu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
         print("Test accuracy: ", testAccu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")
 
         if save_model:
             ml = ModelLoader('daal_SVM', trainResult.model)
             ml.save_daal_model()
 
-        ml = ModelLoader('daal_SVM', None)
-        loaded_model = ml.load_daal_model()
-        self.load_saved_model(loaded_model)
-
     def load_saved_model(self, loaded_model):
         # Begin test timing
         startTime = time.time()
+
+        # Flatten y
+        testLabel = self.y_test.flatten()
 
         # create prediction class
         kern = kernel_function_linear(method='defaultDense')
@@ -102,14 +117,18 @@ class daal_SVM:
         # End test timing
         endTime = time.time()
 
-        # Flatten y
-        testLabel = self.y_test.flatten()
-
         # assess accuracy
         predictions = predictResultTest.prediction.flatten()
         correctTest = np.sum(
             np.logical_or(np.logical_and(testLabel > 0, predictions > 0), np.logical_and(testLabel < 0, predictions < 0)))
         testAccu = float(correctTest) / len(testLabel) * 100
 
+        # Collect statistics
+        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+
         print("Test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Testing Results  ---")
         print("Test accuracy: ", testAccu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print("------------------------")
