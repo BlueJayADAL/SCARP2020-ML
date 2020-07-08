@@ -102,11 +102,14 @@ class daal_SVM:
         # End test timing
         endTime = time.time()
 
+        # Flatten y
+        testLabel = self.y_test.flatten()
+
         # assess accuracy
         predictions = predictResultTest.prediction.flatten()
         correctTest = np.sum(
-            np.logical_or(np.logical_and(self.y_test > 0, predictions > 0), np.logical_and(self.y_test < 0, predictions < 0)))
-        testAccu = float(correctTest) / len(self.y_test) * 100
+            np.logical_or(np.logical_and(testLabel > 0, predictions > 0), np.logical_and(testLabel < 0, predictions < 0)))
+        testAccu = float(correctTest) / len(testLabel) * 100
 
         print("Test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("Test accuracy: ", testAccu)

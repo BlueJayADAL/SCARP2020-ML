@@ -94,7 +94,7 @@ class daal_DF:
         endTime = time.time()
 
         # Assess accuracy
-        correctTest = np.sum(self.y_test == predictResultTest.prediction.flatten())
+        correctTest = np.sum(self.y_test.flatten() == predictResultTest.prediction.flatten())
         testAccu = float(correctTest) / len(self.y_test) * 100
 
         print("Test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
