@@ -76,7 +76,7 @@ class ANN:
         y_pred = loaded_model.predict_classes(self.X_test)
 
         # Collect statistics
-        test_tpr, test_far, test_accu,test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
 
         print("Test (ANN) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")

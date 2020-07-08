@@ -65,8 +65,8 @@ class daal_DF:
         testLabel = self.y_test.flatten()
 
         # Collect statistics
-        train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
-        test_tpr, test_far, test_accu,test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+        train_tpr, train_far, train_accu, train_report = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
         print("Training and test (Decision Forest) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")

@@ -21,4 +21,4 @@ def collect_statistics(y_true, y_pred):
     accu = float(correct) / len(y_true) * 100
     class_report = classification_report(y_true, y_pred)
 
-    return detectionRate, falseAlarmRate, accu
+    return detectionRate, falseAlarmRate, accu, class_report

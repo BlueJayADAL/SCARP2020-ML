@@ -82,8 +82,8 @@ class daal_SVM:
         testAccu = float(correctTest) / len(testLabel) * 100
 
         # Collect statistics
-        train_tpr, train_far, train_accu = collect_statistics(trainLabel, predictionsTrain)
-        test_tpr, test_far, test_accu,test_report = collect_statistics(testLabel, predictionsTest)
+        train_tpr, train_far, train_accu, train_report = collect_statistics(trainLabel, predictionsTrain)
+        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictionsTest)
 
         print("Training and test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
