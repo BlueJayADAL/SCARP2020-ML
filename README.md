@@ -4,7 +4,7 @@ The repository for SCARP 2020 on Network Traffic Analytics
 ## Walkthrough Guide
 1. Currently there is one main runnable file (daalModels.py). A sample command can be found below with respective arguments for running.
     
-`python daalModels.py --dataset NetML --model lr --load False --runs 1`
+`python daalModels.py --dataset NetML --model lr --load false --runs 1`
 
 - -d, --dataset [DATASET]: Specifies which dataset to use (supported: NetML, CICIDS)
 - -m, --model [MODELTYPE]: Specifies which model to use (supported: lr, df, svm, ann)
