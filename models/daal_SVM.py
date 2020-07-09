@@ -125,11 +125,12 @@ class daal_SVM:
         testAccu = float(correctTest) / len(testLabel) * 100
 
         # Collect statistics
-        test_tpr, test_far, test_accu = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
         print("Test (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", testAccu)
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
+        print(test_report)
         print("------------------------")

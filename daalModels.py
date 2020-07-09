@@ -93,7 +93,7 @@ def main():
             else:
                 ann_model.train()
 
-        # python daalModels.py --dataset NetML --model lr --load false
+        # python daalModels.py --dataset NetML --model lr --load false --runs 1
 
 
 main()
