@@ -1,5 +1,7 @@
 import argparse
 
+import psutil
+
 from models.ModelLoader import ModelLoader
 from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
@@ -41,8 +43,14 @@ def main():
         else:
             args.dataset = "./data/CICIDS2017_enc_filtered_top50.csv"
 
+        cpu_reads = []
+        p = psutil.Process()
+        cpu_reads.append(p.cpu_percent(interval=None))
+
+
         # Setup data and labels from csv file
         data, labels = read_csv_dataset(args.dataset)
+        cpu_reads.append(p.cpu_percent(interval=None))
 
         # Train respective model
         if args.model == 'lr':
@@ -56,6 +64,11 @@ def main():
                 lr_daal.load_saved_model(loaded_model)
             else:
                 lr_daal.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print(cpu_mean)
+                print(cpu_max)
         elif args.model == 'df':
             # Setup DF model
             df_daal = daal_DF(data, labels)
@@ -67,6 +80,11 @@ def main():
                 df_daal.load_saved_model(loaded_model)
             else:
                 df_daal.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print(cpu_mean)
+                print(cpu_max)
         elif args.model == 'svm':
             # Setup SVM model
             svm_daal = daal_SVM(data, labels)
@@ -78,6 +96,11 @@ def main():
                 svm_daal.load_saved_model(loaded_model)
             else:
                 svm_daal.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print(cpu_mean)
+                print(cpu_max)
 
         # Non DAAL models can be found below
 
@@ -92,6 +115,11 @@ def main():
                 ann_model.load_saved_model(loaded_model)
             else:
                 ann_model.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print(cpu_mean)
+                print(cpu_max)
 
         # python daalModels.py --dataset NetML --model lr --load false --runs 1
 
