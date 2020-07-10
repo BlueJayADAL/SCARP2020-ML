@@ -7,6 +7,7 @@ from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
 from models.daal_SVM import daal_SVM
 from models.ANN import ANN
+from models.daal_kNN import daal_kNN
 from utils.helper import read_csv_dataset
 from distutils import util
 
@@ -23,7 +24,7 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "ann"]:
+    elif args.model not in ["lr", "df", "svm", "ann", "knn"]:
         print("Please select one of these for model: {lr, df, svm, ann}. e.g. --model lr")
         return
     elif args.load not in ["true", "false"]:
@@ -101,6 +102,22 @@ def main():
                 cpu_max = max(cpu_reads)
                 print(cpu_mean)
                 print(cpu_max)
+        elif args.model == 'knn':
+            knn_daal = daal_kNN(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('daal_kNN', None)
+                loaded_model = ml.load_daal_model()
+                knn_daal.load_saved_model(loaded_model)
+            else:
+                knn_daal.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print(cpu_mean)
+                print(cpu_max)
+
 
         # Non DAAL models can be found below
 
