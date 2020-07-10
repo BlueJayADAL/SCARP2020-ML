@@ -1,10 +1,13 @@
 import argparse
 
+from models.CNN1D import CNN1D
+from models.CNN2D import CNN2D
 from models.ModelLoader import ModelLoader
 from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
 from models.daal_SVM import daal_SVM
 from models.ANN import ANN
+from models.vino_ANN import vino_ANN
 from utils.helper import read_csv_dataset
 from distutils import util
 
@@ -21,8 +24,8 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "ann"]:
-        print("Please select one of these for model: {lr, df, svm, ann}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "ann", "cnn1d", "cnn2d", "vinoann"]:
+        print("Please select one of these for model: {lr, df, svm, ann, cnn1d, cnn2d, vinoann}. e.g. --model lr")
         return
     elif args.load not in ["true", "false"]:
         args.load = False
@@ -93,7 +96,41 @@ def main():
             else:
                 ann_model.train()
 
-        # python daalModels.py --dataset NetML --model lr --load false --runs 1
+        elif args.model == 'cnn1d':
+            # Setup 1D-CNN model
+            cnn1d_model = CNN1D(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_cnn1d', None)
+                loaded_model = ml.load_keras_model()
+                cnn1d_model.load_saved_model(loaded_model)
+            else:
+                cnn1d_model.train_model()
+
+        elif args.model == 'cnn2d':
+            # Setup 2D-CNN model
+            cnn2d_model = CNN2D(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_cnn2d', None)
+                loaded_model = ml.load_keras_model()
+                cnn2d_model.load_saved_model(loaded_model)
+            else:
+                cnn2d_model.train_model()
+
+        elif args.model == 'vinoann':
+            # Setup VINO ANN model
+            vino_ann_model = vino_ANN(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                pass
+            else:
+                vino_ann_model.train()
+
+        # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 
 
 main()

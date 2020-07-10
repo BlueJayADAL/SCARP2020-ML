@@ -25,6 +25,7 @@ class daal_LR:
         Run this method to reset values
         """
         # Reshape labels
+        self.data = np.array(self.data)
         self.labels = np.array(self.labels).reshape((len(self.labels), 1))
 
         # Setup train / test data

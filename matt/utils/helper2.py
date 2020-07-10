@@ -89,7 +89,7 @@ def read_meta_json_gz(jsonFilename, tlsOnly=False, featureDict=None):
             print("Total {} lines were skipped because of invalid characters.".format(len(pb_dataline)))
 
         if featureDict is None:
-            with open("./utils/featureDict_META.json", 'r') as js:
+            with open("matt/utils/featureDict_META.json", 'r') as js:
                 featureDict = json.load(js)
 
         # Create an empty numpy array of arbitrarily but sufficiently large (2048) in terms of columns

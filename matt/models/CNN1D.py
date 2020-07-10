@@ -5,10 +5,10 @@ import tensorflow as tf
 from sklearn import preprocessing, metrics
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
-from tensorflow_core.python.autograph.pyct import anno
-from tensorflow_core.python.keras import Input
-from tensorflow_core.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dense
-from tensorflow_core.python.keras.models import Model
+from tensorflow.python.autograph.pyct import anno
+from tensorflow.python.keras import Input
+from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dense
+from tensorflow.python.keras.models import Model
 
 from utils.helper2 import read_dataset, one_hot
 
@@ -70,7 +70,7 @@ class CNN1D:
 
         # Get name of each class to display in confusion matrix
         top_class_names = list(sorted(class_label_pairs.keys()))
-        # fine_class_names = list(sorted(class_label_pairs_list[1].keys()))
+        # fine_class_names = ANNlist(sorted(class_label_pairs_list[1].keys()))
 
         # Default Training Hyperparameters
         n_classes_top = len(top_class_names)
@@ -93,14 +93,13 @@ class CNN1D:
                                  CNN_layers=CNN_layers, clf_reg=clf_reg)
 
         print(model.summary())  # summarize layers
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
-                      metrics=['accuracy'])
         # Train the model
         history = model.fit(X_train_1D, one_hot(y_train, n_classes_top),
                             batch_size=n_batch,
                             epochs=n_epochs,
                             validation_data=(X_test_1D, one_hot(y_test, n_classes_top)))
+
+        return model
 
     def train_model(self, X_train, OUTPUT,
                     filters=250,

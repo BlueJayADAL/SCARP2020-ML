@@ -3,11 +3,8 @@ import sys
 import os.path
 import time
 
-from models.CNN1D import CNN1D
-from models.CNN2D import CNN2D
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
+from matt.models.CNN1D import CNN1D
+from matt.models.CNN2D import CNN2D
 from matt.models.ANN import ANN
 from matt.models.MLP import MLP
 from matt.models.ModelLoader import ModelLoader
@@ -24,7 +21,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.dataset is None or not os.path.isdir(args.dataset) or args.anno is None:
+    if args.dataset is None or not os.path.isdir("matt/" + args.dataset) or args.anno is None:
         print("No valid dataset set or annotations found!")
         return
     elif args.submit is not None and args.submit not in ["test-std", "test-challenge", "both"]:
@@ -38,12 +35,12 @@ def main():
             "NetML and CICIDS2017 datasets cannot be trained with mid-level annotations. Please use either top or fine.")
         return
     else:
-        training_set = args.dataset + "/2_training_set"
-        training_anno_file = args.dataset + "/2_training_annotations/2_training_anno_" + args.anno + ".json.gz"
-        test_set = args.dataset + "/1_test-std_set"
-        challenge_set = args.dataset + "/0_test-challenge_set"
+        training_set = "matt/" + args.dataset + "/2_training_set"
+        training_anno_file = "matt/" + args.dataset + "/2_training_annotations/2_training_anno_" + args.anno + ".json.gz"
+        test_set = "matt/" + args.dataset + "/1_test-std_set"
+        challenge_set = "matt/" + args.dataset + "/0_test-challenge_set"
 
-    #python Main.py --dataset ./data/NetML --anno top --submit test-std
+    #python3 matt/Main.py --dataset ./data/NetML --anno top --submit test-std
 
     #mlp = MLP(training_set, training_anno_file, test_set)
     #mlp.train_model()

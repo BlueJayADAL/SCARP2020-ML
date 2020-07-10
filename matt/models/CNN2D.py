@@ -6,7 +6,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential, Model, model_from_json
 from tensorflow.keras.layers import Input, Dense, Dropout, concatenate, Flatten, Conv2D, MaxPooling2D
-from tensorflow_core.python.autograph.pyct import anno
+from tensorflow.python.autograph.pyct import anno
 
 from utils.helper2 import read_dataset, one_hot
 
