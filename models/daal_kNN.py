@@ -53,8 +53,9 @@ class daal_kNN:
         trainResult = trainAlg.compute(self.X_train,
                                        self.y_train)
         # Create prediction classes 0.
-        predictAlgTrain = kdtree_knn_classification_prediction(nClasses=nClasses)
-        predictAlgTest = kdtree_knn_classification_prediction(nClasses=nClasses)
+        predictAlgTrain = kdtree_knn_classification_prediction(nClasses=nClasses, k=2)
+        predictAlgTest = kdtree_knn_classification_prediction(nClasses=nClasses, k=2)
+
         # Make train and test predictions
         predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
         predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
