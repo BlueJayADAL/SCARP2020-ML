@@ -70,8 +70,8 @@ def main():
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
-                print(cpu_mean)
-                print(cpu_max)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
         elif args.model == 'df':
             # Setup DF model
             df_daal = daal_DF(data, labels)
@@ -86,8 +86,8 @@ def main():
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
-                print(cpu_mean)
-                print(cpu_max)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
         elif args.model == 'svm':
             # Setup SVM model
             svm_daal = daal_SVM(data, labels)
@@ -102,8 +102,8 @@ def main():
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
-                print(cpu_mean)
-                print(cpu_max)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
         elif args.model == 'knn':
             knn_daal = daal_kNN(data, labels)
 
@@ -117,8 +117,8 @@ def main():
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
-                print(cpu_mean)
-                print(cpu_max)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
 
         # Non DAAL models can be found below
@@ -137,8 +137,8 @@ def main():
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
-                print(cpu_mean)
-                print(cpu_max)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         elif args.model == 'cnn1d':
             # Setup 1D-CNN model
@@ -151,6 +151,11 @@ def main():
                 cnn1d_model.load_saved_model(loaded_model)
             else:
                 cnn1d_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         elif args.model == 'cnn2d':
             # Setup 2D-CNN model
@@ -163,6 +168,11 @@ def main():
                 cnn2d_model.load_saved_model(loaded_model)
             else:
                 cnn2d_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         elif args.model == 'vinoann':
             # Setup VINO ANN model
@@ -173,6 +183,11 @@ def main():
                 pass
             else:
                 vino_ann_model.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 
