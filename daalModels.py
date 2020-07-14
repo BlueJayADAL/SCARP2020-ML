@@ -189,6 +189,7 @@ def main():
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
 
+
         # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 
 
