@@ -732,7 +732,7 @@ def main():
 		processEnd = time.time()
 		print("Data prep elapsed in %.3f seconds" %(processEnd - processStart))
 		# train the model
-		acc = mlModel.train(d[0], d[1], args.output, workDir)
+		acc = mlModel.train_model(d[0], d[1], args.output, workDir)
 		if args.model != 'vinoANN':
 			print("Accuracy: %.3f%% train, %.3f%% test" %(acc[0], acc[1]))
 	#Test only

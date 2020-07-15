@@ -10,6 +10,8 @@ from models.daal_SVM import daal_SVM
 from models.daal_kNN import daal_kNN
 from models.ANN import ANN
 from models.vino_ANN import vino_ANN
+from models.vino_CNN1D import vino_CNN1D
+from models.vino_CNN2D import vino_CNN2D
 from utils.helper import read_csv_dataset
 from distutils import util
 
@@ -26,8 +28,8 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "knn", "ann", "cnn1d", "cnn2d", "vinoann"]:
-        print("Please select one of these for model: {lr, df, svm, knn, ann, cnn1d, cnn2d, vinoann}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "knn", "ann", "cnn1d", "cnn2d", "vinoann", "vinocnn1d", "vinocnn2d"]:
+        print("Please select one of these for model: {lr, df, svm, knn, ann, cnn1d, cnn2d, vinoann, vinocnn1d, vinocnn2d}. e.g. --model lr")
         return
     elif args.load not in ["true", "false"]:
         args.load = False
@@ -55,7 +57,9 @@ def main():
         data, labels = read_csv_dataset(args.dataset)
         cpu_reads.append(p.cpu_percent(interval=None))
 
-        # Train respective model
+        # Train respective model based on arguments provided from command
+
+        # Handle DAAL LR Model
         if args.model == 'lr':
             # Setup LR model
             lr_daal = daal_LR(data, labels)
@@ -72,6 +76,8 @@ def main():
                 cpu_max = max(cpu_reads)
                 print(cpu_mean)
                 print(cpu_max)
+
+        # Handle DAAL DF Model
         elif args.model == 'df':
             # Setup DF model
             df_daal = daal_DF(data, labels)
@@ -88,6 +94,8 @@ def main():
                 cpu_max = max(cpu_reads)
                 print(cpu_mean)
                 print(cpu_max)
+
+        # Handle DAAL SVM Model
         elif args.model == 'svm':
             # Setup SVM model
             svm_daal = daal_SVM(data, labels)
@@ -104,6 +112,8 @@ def main():
                 cpu_max = max(cpu_reads)
                 print(cpu_mean)
                 print(cpu_max)
+
+        # Handle DAAL KNN Model
         elif args.model == 'knn':
             knn_daal = daal_kNN(data, labels)
 
@@ -123,6 +133,7 @@ def main():
 
         # Non DAAL models can be found below
 
+        # Handle ANN Model
         elif args.model == 'ann':
             # Setup ANN model
             ann_model = ANN(data, labels)
@@ -140,6 +151,7 @@ def main():
                 print(cpu_mean)
                 print(cpu_max)
 
+        # Handle 1D-CNN Model
         elif args.model == 'cnn1d':
             # Setup 1D-CNN model
             cnn1d_model = CNN1D(data, labels)
@@ -152,6 +164,7 @@ def main():
             else:
                 cnn1d_model.train_model()
 
+        # Handle 2D-CNN Model
         elif args.model == 'cnn2d':
             # Setup 2D-CNN model
             cnn2d_model = CNN2D(data, labels)
@@ -164,6 +177,7 @@ def main():
             else:
                 cnn2d_model.train_model()
 
+        # Handle VINO ANN Model
         elif args.model == 'vinoann':
             # Setup VINO ANN model
             vino_ann_model = vino_ANN(data, labels)
@@ -172,7 +186,29 @@ def main():
             if args.load:
                 pass
             else:
-                vino_ann_model.train()
+                vino_ann_model.train_model()
+
+        # Handle VINO 1D-CNN Model
+        elif args.model == 'vinocnn1d':
+            # Setup VINO CNN1D model
+            vino_cnn1d_model = vino_CNN1D(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                pass
+            else:
+                vino_cnn1d_model.train_model()
+
+        # Handle VINO 2D-CNN Model
+        elif args.model == 'vinocnn2d':
+            # Setup VINO CNN2D model
+            vino_cnn2d_model = vino_CNN2D(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                pass
+            else:
+                vino_cnn2d_model.train_model()
 
         # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 
