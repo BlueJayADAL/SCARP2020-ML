@@ -11,7 +11,7 @@ from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatte
 from tensorflow.python.keras.models import Model
 
 from models.ModelLoader import ModelLoader
-from utils.helper import encode_label
+from utils.helper import encode_label, convertToDefault, convertToOneHot, collect_statistics
 from utils.helper2 import read_dataset, one_hot
 
 
@@ -160,6 +160,14 @@ class CNN1D:
                       metrics=['accuracy'])
 
         score = loaded_model.evaluate(self.X_test_1D, one_hot(self.y_test, self.n_classes_top), verbose=0)
+
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(loaded_model.predict(self.X_test_1D)))
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")
 
         print('%s: %.3f%%' % (loaded_model.metrics_names[1], score[1]*100))
 

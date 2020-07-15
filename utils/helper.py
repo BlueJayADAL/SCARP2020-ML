@@ -99,9 +99,10 @@ def convertToOneHot(array):
 
 def convertToDefault(array):
     # Convert from one-hot to default format
-    for arr in array:
-        if arr[0] == 0:
-            arr = 1
+    new_arr = np.zeros(array.shape[0])
+    for i in range(array.shape[0]):
+        if array[i][0] > array[i][1]:
+            new_arr[i] = 0
         else:
-            arr = 0
-    return array
+            new_arr[i] = 1
+    return new_arr
