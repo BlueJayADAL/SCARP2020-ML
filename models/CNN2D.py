@@ -9,7 +9,7 @@ from tensorflow.keras.layers import Input, Dense, Dropout, concatenate, Flatten,
 from tensorflow.python.autograph.pyct import anno
 
 from models.ModelLoader import ModelLoader
-from utils.helper import encode_label
+from utils.helper import encode_label, collect_statistics, convertToDefault
 from utils.helper2 import read_dataset, one_hot
 
 
@@ -150,6 +150,15 @@ class CNN2D:
                       metrics=['accuracy'])
 
         score = loaded_model.evaluate(self.X_test_2D, one_hot(self.y_test, self.n_classes_top), verbose=0)
+
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(
+            loaded_model.predict(self.X_test_2D)))
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")
 
         print('%s: %.3f%%' % (loaded_model.metrics_names[1], score[1] * 100))
 
