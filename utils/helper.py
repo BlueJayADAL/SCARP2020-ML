@@ -84,6 +84,7 @@ def encode_label(labels, class_label_pairs=None):
 
     return labelArray, class_label_pairs
 
+
 def convertToOneHot(array):
     # Convert predictions to one-hot format
     for arr in array:
@@ -94,3 +95,12 @@ def convertToOneHot(array):
             arr[0] = 0
             arr[1] = 1
     return array
+
+
+def convertToDefault(array):
+    # Convert from one-hot to default format
+    for arr in array:
+        if arr[0] == 0:
+            arr = 1
+        else:
+            arr = 0
