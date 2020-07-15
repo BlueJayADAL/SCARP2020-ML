@@ -104,3 +104,4 @@ def convertToDefault(array):
             arr = 1
         else:
             arr = 0
+    return array
