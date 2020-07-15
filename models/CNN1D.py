@@ -70,7 +70,7 @@ class CNN1D:
         decay_rate = 1e-5
         dropout_rate = 0.5
         n_batch = 64
-        n_epochs = 10  # Loop 10 times on the dataset
+        n_epochs = 1  # Loop 10 times on the dataset
         filters = 128
         kernel_size = 4
         strides = 1
@@ -161,6 +161,6 @@ class CNN1D:
 
         score = loaded_model.evaluate(self.X_test_1D, one_hot(self.y_test, self.n_classes_top), verbose=0)
 
-        print('%s: %.2f%%' % (loaded_model.metrics_names[1], score[1]*100))
+        print('%s: %.3f%%' % (loaded_model.metrics_names[1], score[1]*100))
 
         return loaded_model

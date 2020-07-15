@@ -6,7 +6,7 @@ from tensorflow.python.keras.models import model_from_json
 from tensorflow.python.keras import backend as K
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 
-from utils.helper import freeze_session, wrap_frozen_graph
+from utils.helper import freeze_session
 
 
 class ModelLoader:
@@ -73,42 +73,6 @@ class ModelLoader:
                              loss='binary_crossentropy',  # Tries to minimize loss
                              metrics=['accuracy'])
 
-        full_model = tf.function(lambda x: model(x))
-        full_model = full_model.get_concrete_function(x=(tf.TensorSpec(self.model.inputs[0].shape, self.model.inputs[0].dtype),
-                                                         tf.TensorSpec(self.model.inputs[1].shape, self.model.inputs[1].dtype),
-                                                         tf.TensorSpec(self.model.inputs[2].shape, self.model.inputs[2].dtype)))
+        frozen_graph = freeze_session(K.get_session(), output_names=[out.op.name for out in self.model.outputs])
 
-        frozen_func = convert_variables_to_constants_v2(full_model, lower_control_flow=False)
-        frozen_func.graph.as_graph_def()
-
-        layers = [op.name for op in frozen_func.graph.get_operations()]
-        print("-" * 50)
-        print("Frozen model layers: ")
-        for layer in layers:
-            print(layer)
-
-        print("-" * 50)
-        print("Frozen model inputs: ")
-        print(frozen_func.inputs)
-        print("Frozen model outputs: ")
-        print(frozen_func.outputs)
-
-        # Save frozen graph from frozen ConcreteFunction to hard drive
-        tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
-                          logdir="./frozen_models",
-                          name="complex_frozen_graph.pb",
-                          as_text=False)
-
-        # Load frozen graph using TensorFlow 1.x functions
-        with tf.io.gfile.GFile("./frozen_models/complex_frozen_graph.pb", "rb") as f:
-            graph_def = tf.compat.v1.GraphDef()
-            loaded = graph_def.ParseFromString(f.read())
-
-        # Wrap frozen graph to ConcreteFunctions
-        frozen_func = wrap_frozen_graph(graph_def=graph_def,
-                                        inputs=["x:0", "x_1:0", "x_2:0"],
-                                        outputs=["Identity:0", "Identity_1:0"],
-                                        print_graph=True)
-
-        # frozen_graph = freeze_session(K.get_session(), output_names=[out.op.name for out in self.model.outputs])
-        tf.io.write_graph(frozen_func, save_dir, "vino_ann.pb", as_text=False)
+        tf.train.write_graph(frozen_graph, save_dir, "vino_" + self.filename.split("_")[1] + ".pb", as_text=False)
