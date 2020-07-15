@@ -1,10 +1,9 @@
 import joblib
 import tensorflow as tf
-from tensorflow.python.data.experimental.ops.optimization import model
 
 from tensorflow.python.keras.models import model_from_json
 from tensorflow.python.keras import backend as K
-from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
+from openvino.inference_engine import IECore, IENetwork
 
 from utils.helper import freeze_session
 
@@ -66,7 +65,7 @@ class ModelLoader:
         return self.model
 
     def save_keras_as_vino(self,
-                           save_dir='models/saved/',):
+                           save_dir='models/saved/'):
         session = K.get_session
 
         self.model.compile(optimizer='adam',
@@ -76,3 +75,14 @@ class ModelLoader:
         frozen_graph = freeze_session(K.get_session(), output_names=[out.op.name for out in self.model.outputs])
 
         tf.train.write_graph(frozen_graph, save_dir, "vino_" + self.filename.split("_")[1] + ".pb", as_text=False)
+
+    def load_vino_model(self,
+                        load_dir='models/saved/'):
+        modelXML = load_dir + self.filename + ".xml"
+        modelBin = load_dir + self.filename + ".bin"
+
+        ie = IECore()
+        net = ie.read_network(model=modelXML, weights=modelBin)
+        execNet = ie.load_network(network=net, device_name="CPU")
+
+        return net, execNet

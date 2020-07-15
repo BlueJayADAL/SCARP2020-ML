@@ -7,7 +7,7 @@ from models.CNN2D import CNN2D
 from models.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork, IEPlugin
 
-from utils.helper import convertToOneHot
+from utils.helper import convertToOneHot, collect_statistics, convertToDefault
 from utils.helper2 import one_hot
 
 
@@ -71,30 +71,37 @@ class vino_CNN2D:
         # End train timing
         endTime = time.time()
 
-        print("Test (VINO Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Preparation (VINO Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
 
-        self.load_saved_model(None)
+        ml = ModelLoader('vino_cnn2d', None)
+        net, execNet = ml.load_vino_model()
+        self.load_saved_model(net, execNet)
 
-    def load_saved_model(self, loaded_model,
+    def load_saved_model(self, net, execNet,
                          work_dir='models/saved/'):
-        modelXML = work_dir + "vino_cnn2d.xml"
-        modelBin = work_dir + "vino_cnn2d.bin"
+        # Begin testing time
+        startTime = time.time()
 
-        ie = IECore()
-        net = ie.read_network(model=modelXML, weights=modelBin)
-        execNet = ie.load_network(network=net, device_name="CPU")
-
+        # Get input and outputs of model
         input_blob = next(iter(net.inputs))
         out_blob = next(iter(net.outputs))
 
+        # Input data into model for predicting
         res = execNet.infer(inputs={input_blob: self.X_test_2D})
 
-        # Gets the output layer from neural network
+        # Get prediction results
         res = res['top_level_output/Softmax']
 
-        res = convertToOneHot(res)
+        # End testing time
+        endTime = time.time()
 
-        correctTest = np.sum(one_hot(self.y_test, self.n_classes_top) == res) / float(self.n_classes_top)
+        # Collect statistics
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(res))
 
-        testAccu = float(correctTest) / len(self.y_test) * 100
-        print("VINO CNN2D Test Accuracy: %.3f%%" % testAccu)
+        print("Test (VINO Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")

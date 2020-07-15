@@ -212,7 +212,9 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                pass
+                ml = ModelLoader('vino_cnn1d', None)
+                net, execNet = ml.load_vino_model()
+                vino_cnn1d_model.load_saved_model(net, execNet)
             else:
                 vino_cnn1d_model.train_model()
 
@@ -223,7 +225,9 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                pass
+                ml = ModelLoader('vino_cnn2d', None)
+                net, execNet = ml.load_vino_model()
+                vino_cnn2d_model.load_saved_model(net, execNet)
             else:
                 vino_cnn2d_model.train_model()
 
