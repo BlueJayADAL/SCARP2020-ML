@@ -11,6 +11,8 @@ from models.daal_SVM import daal_SVM
 from models.daal_kNN import daal_kNN
 from models.ANN import ANN
 from models.vino_ANN import vino_ANN
+
+from models.kNN import kNN
 from models.vino_CNN1D import vino_CNN1D
 from models.vino_CNN2D import vino_CNN2D
 from utils.helper import read_csv_dataset
@@ -72,6 +74,23 @@ def main():
                 lr.load_saved_model(loaded_model)
             else:
                 lr.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+        #hendles regular knn
+        elif args.model == 'knn':
+            # Setup knn model
+            knn = kNN(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_knn', None)
+                loaded_model = ml.load_sk_daal_model()
+                knn.load_saved_model(loaded_model)
+            else:
+                knn.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
