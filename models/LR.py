@@ -1,13 +1,13 @@
 import time
 import numpy as np
 
-from _daal4py import logistic_regression_training, logistic_regression_prediction
+from sklearn.linear_model import LogisticRegression
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
 
 
-class daal_LR:
+class LR:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -34,9 +34,9 @@ class daal_LR:
         upperBound = int(dataLen * mark)
 
         self.X_train = self.data[0:upperBound]
-        self.y_train = self.labels[0:upperBound]
+        self.y_train = self.labels[0:upperBound].flatten()
         self.X_test = self.data[upperBound:]
-        self.y_test = self.labels[upperBound:]
+        self.y_test = self.labels[upperBound:].flatten()
 
     def train(self,
               save_model=True):
@@ -47,30 +47,22 @@ class daal_LR:
         startTime = time.time()
 
         # Create Logistic Regression Classifier
-        trainAlg = logistic_regression_training(nClasses=nClasses, interceptFlag=True)
+        logreg = LogisticRegression(penalty='l2', solver='newton-cg', max_iter=1000000, verbose=1)
 
         # Train model
-        trainResult = trainAlg.compute(self.X_train,
-                                       self.y_train)
-        # Create prediction classes 0.
-        predictAlgTrain = logistic_regression_prediction(nClasses=nClasses)
-        predictAlgTest = logistic_regression_prediction(nClasses=nClasses)
-        # Make train and test predictions
-        predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
-        predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
+        logreg.fit(self.X_train, self.y_train)
+
+        y_train_pred = logreg.predict(self.X_train)
+        y_test_pred = logreg.predict(self.X_test)
 
         # End train timing
         endTime = time.time()
 
-        # Flatten y values
-        trainLabel = self.y_train.flatten()
-        testLabel = self.y_test.flatten()
-
         # Collect statistics
-        train_tpr, train_far, train_accu, train_report = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
-        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, y_train_pred)
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_test_pred)
 
-        print("Training and test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training and testing (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -83,29 +75,23 @@ class daal_LR:
         print("------------------------")
 
         if save_model:
-            ml = ModelLoader('daal_LR', trainResult.model)
+            ml = ModelLoader('model_LR', logreg)
             ml.save_sk_daal_model()
 
     def load_saved_model(self, loaded_model):
         # Begin test timing
         startTime = time.time()
 
-        # Flatten y
-        testLabel = self.y_test.flatten()
-
-        # Create prediction class
-        predictAlg = logistic_regression_prediction(nClasses=2)
-
         # Make predictions
-        predictResultTest = predictAlg.compute(self.X_test, loaded_model)
+        y_pred = loaded_model.predict(self.X_test)
 
         # End test timing
         endTime = time.time()
 
         # Collect statistics
-        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_pred)
 
-        print("Test (DAAL Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)

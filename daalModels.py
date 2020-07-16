@@ -3,6 +3,7 @@ import psutil
 
 from models.CNN1D import CNN1D
 from models.CNN2D import CNN2D
+from models.LR import LR
 from models.ModelLoader import ModelLoader
 from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
@@ -28,8 +29,8 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "knn", "ann", "cnn1d", "cnn2d", "vinoann", "vinocnn1d", "vinocnn2d"]:
-        print("Please select one of these for model: {lr, df, svm, knn, ann, cnn1d, cnn2d, vinoann, vinocnn1d, vinocnn2d}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "cnn1d", "cnn2d", "vinoann", "vinocnn1d", "vinocnn2d"]:
+        print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, cnn1d, cnn2d, vinoann, vinocnn1d, vinocnn2d}. e.g. --model lr")
         return
     elif args.load not in ["true", "false"]:
         args.load = False
@@ -59,15 +60,33 @@ def main():
 
         # Train respective model based on arguments provided from command
 
-        # Handle DAAL LR Model
+        # Handle LR Model:
         if args.model == 'lr':
+            # Setup LR model
+            lr = LR(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_LR', None)
+                loaded_model = ml.load_sk_daal_model()
+                lr.load_saved_model(loaded_model)
+            else:
+                lr.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+
+        # Handle DAAL LR Model
+        elif args.model == 'daallr':
             # Setup LR model
             lr_daal = daal_LR(data, labels)
 
             # Handle training / loading of model
             if args.load:
                 ml = ModelLoader('daal_LR', None)
-                loaded_model = ml.load_daal_model()
+                loaded_model = ml.load_sk_daal_model()
                 lr_daal.load_saved_model(loaded_model)
             else:
                 lr_daal.train()
@@ -78,14 +97,14 @@ def main():
                 print("Cpu Max:", cpu_max)
 
         # Handle DAAL DF Model
-        elif args.model == 'df':
+        elif args.model == 'daaldf':
             # Setup DF model
             df_daal = daal_DF(data, labels)
 
             # Handle training / loading of model
             if args.load:
                 ml = ModelLoader('daal_DF', None)
-                loaded_model = ml.load_daal_model()
+                loaded_model = ml.load_sk_daal_model()
                 df_daal.load_saved_model(loaded_model)
             else:
                 df_daal.train()
@@ -96,14 +115,14 @@ def main():
                 print("Cpu Max:", cpu_max)
 
         # Handle DAAL SVM Model
-        elif args.model == 'svm':
+        elif args.model == 'daalsvm':
             # Setup SVM model
             svm_daal = daal_SVM(data, labels)
 
             # Handle training / loading of model
             if args.load:
                 ml = ModelLoader('daal_SVM', None)
-                loaded_model = ml.load_daal_model()
+                loaded_model = ml.load_sk_daal_model()
                 svm_daal.load_saved_model(loaded_model)
             else:
                 svm_daal.train()
@@ -114,13 +133,13 @@ def main():
                 print("Cpu Max:", cpu_max)
 
         # Handle DAAL KNN Model
-        elif args.model == 'knn':
+        elif args.model == 'daalknn':
             knn_daal = daal_kNN(data, labels)
 
             # Handle training / loading of model
             if args.load:
                 ml = ModelLoader('daal_kNN', None)
-                loaded_model = ml.load_daal_model()
+                loaded_model = ml.load_sk_daal_model()
                 knn_daal.load_saved_model(loaded_model)
             else:
                 knn_daal.train()

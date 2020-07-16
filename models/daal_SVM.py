@@ -99,7 +99,7 @@ class daal_SVM:
 
         if save_model:
             ml = ModelLoader('daal_SVM', trainResult.model)
-            ml.save_daal_model()
+            ml.save_sk_daal_model()
 
     def load_saved_model(self, loaded_model):
         # Begin test timing

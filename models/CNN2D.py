@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -59,6 +61,9 @@ class CNN2D:
 
     def train_model(self,
                     save_model=True):
+        # Begin train timing
+        startTime = time.time()
+
         # Default Training Hyperparameters
         # n_classes_fine = len(fine_class_names)
         learning_rate = 1e-3
@@ -133,14 +138,19 @@ class CNN2D:
         history = model.fit(self.X_train_2D, one_hot(self.y_train, self.n_classes_top), batch_size=n_batch, epochs=n_epochs,
                             validation_data=(self.X_test_2D, one_hot(self.y_test, self.n_classes_top)))
 
-        score = model.evaluate(self.X_test_2D, one_hot(self.y_test, self.n_classes_top), verbose=0)
-        print('%s: %.2f%%' % (model.metrics_names[1], score[1] * 100))
+        # End train timing
+        endTime = time.time()
+
+        print("Training (Convolutional 1D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
 
         if save_model:
             ml = ModelLoader('model_cnn2d', model)
             ml.save_keras_model()
 
     def load_saved_model(self, loaded_model):
+        # Start test timing
+        startTime = time.time()
+
         # Base settings for learning
         learning_rate = 1e-3
         decay_rate = 1e-5
@@ -149,17 +159,19 @@ class CNN2D:
                       optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
                       metrics=['accuracy'])
 
-        score = loaded_model.evaluate(self.X_test_2D, one_hot(self.y_test, self.n_classes_top), verbose=0)
+        y_pred = loaded_model.predict(self.X_test_2D)
 
-        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(
-            loaded_model.predict(self.X_test_2D)))
+        # End test timing
+        endTime = time.time()
+
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(y_pred))
+
+        print("Testing (Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
-
-        print('%s: %.3f%%' % (loaded_model.metrics_names[1], score[1] * 100))
 
         return loaded_model

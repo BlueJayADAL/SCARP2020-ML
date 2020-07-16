@@ -46,16 +46,16 @@ class ModelLoader:
 
         return self.model
 
-    def save_daal_model(self,
-                        save_dir='models/saved/'):
+    def save_sk_daal_model(self,
+                           save_dir='models/saved/'):
         """
         Saves a DAAL model to disk memory
         """
         outPKL = "%s%s.pkl" % (save_dir, self.filename)
         joblib.dump(self.model, outPKL)
 
-    def load_daal_model(self,
-                        load_dir='models/saved/'):
+    def load_sk_daal_model(self,
+                           load_dir='models/saved/'):
         """
         Loads a DAAL model from disk memory
         """
