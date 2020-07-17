@@ -217,6 +217,52 @@ def read_dataset(datasetFolderName, annotationFileName=None, TLS=None, DNS=None,
         return feature_names, ids, dataArray, 0, 0
 
 
+def read_raw_from_csv(filename, anno):
+    filebase = filename.split('/')[-1]
+    N = int(filebase[filebase.find('_N')+2:filebase.find('_M')])
+    M = int(filebase[filebase.find('_M')+2:filebase.find('_multilabels.csv')])
+    
+    df = pd.read_csv(filename)
+    if anno == 'fine':
+        number_df = df.groupby(['fine_grained']).size().to_frame('num_flows')
+        
+        filtered_classes = list(number_df.loc[number_df['num_flows'] == 1].index)
+        if len(filtered_classes) > 0:
+            print("Classes with number of flows only 1:")
+            print(filtered_classes)
+            df = df[~df.fine_grained.isin(filtered_classes)]
+            print("These flows are filtered.")
+
+        labels = df.pop('fine_grained').values
+        df.pop('mid_level')
+        df.pop('top_level')
+
+    elif anno == 'mid':
+        number_df = df.groupby(['fine_grained']).size().to_frame('num_flows')
+        
+        filtered_classes = list(number_df.loc[number_df['num_flows'] == 1].index)
+        if len(filtered_classes) > 0:
+            print("Classes with number of flows only 1:")
+            print(filtered_classes)
+            df = df[~df.fine_grained.isin(filtered_classes)]
+            print("These flows are filtered.")
+
+        labels = df.pop('mid_level').values
+        df.pop('fine_grained')
+        df.pop('top_level')
+
+    elif anno == 'top':
+        labels = df.pop('top_level').values
+        df.pop('fine_grained')
+        df.pop('mid_level')
+
+    labelArray, class_label_pair = encode_label(labels)    
+    dataArray = df.values
+    dataArray = dataArray.reshape(-1, N, M)        
+
+    return dataArray, labelArray, class_label_pair
+
+
 def read_anno_json_gz(filename, class_label_pairs=None):
     # Read annotation JSON.gz file:
     with gzip.open(filename, "rb") as an:
@@ -327,7 +373,8 @@ def plot_confusion_matrix(directory, y_true, y_pred, classes, normalize=False, t
     fig.tight_layout()
     fig.savefig(directory+"/CM.png", bbox_inches='tight')
     print("Confusion matrix is saved as .{}/CM.png\n".format(directory[directory.find("/results"):]))
-
+    plt.close('all')
+    
     return ax, cm, results
 
 
@@ -363,6 +410,7 @@ def plotLoss(save_dir, history):
     plt.xlabel('epoch')
     plt.legend([x3, x4], loc='best')
     plt.savefig(save_dir+'/loss.png')
+    plt.close('all')
 
 
 def saveModel(save_dir, model, save_dict, history):
