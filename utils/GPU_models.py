@@ -96,8 +96,12 @@ class CNN_1D:
         self.n_classes = n_classes
 
     def train(self, X_train, y_train, X_val, y_val, n_batch, n_epochs, learning_rate, decay_rate, save_dir):
-        X_train_1D = X_train.reshape(-1,X_train.shape[1],1)
-        X_val_1D = X_val.reshape(-1,X_val.shape[1],1)
+        if len(X_train.shape) < 3:
+            X_train_1D = X_train.reshape(-1,X_train.shape[1],1)
+            X_val_1D = X_val.reshape(-1,X_val.shape[1],1)
+        else:
+            X_train_1D = X_train
+            X_val_1D = X_val
         print(self.model.summary()) # summarize layers
         plot_model(self.model, to_file=save_dir+'/model.png') # plot graph
         self.model.compile(loss='categorical_crossentropy',
@@ -112,7 +116,11 @@ class CNN_1D:
     
 
     def classify(self, data):
-        X_test_1D = data.reshape(-1,data.shape[1],1)
+        if len(data.shape) < 3:
+            X_test_1D = data.reshape(-1,data.shape[1],1)
+        else:
+            X_test_1D = data        
+
         return self.model.predict(X_test_1D)
 
 
@@ -197,6 +205,9 @@ class CNN_2D:
         self.n_classes = n_classes
 
     def train(self, X_train, y_train, X_val, y_val, n_batch, n_epochs, learning_rate, decay_rate, save_dir):
+        if len(X_train.shape) > 2:
+            X_train = X_train.reshape(-1, X_train.shape[1], X_train.shape[2], 1)
+            X_val = X_val.reshape(-1, X_val.shape[1], X_val.shape[2], 1)
         print(self.model.summary()) # summarize layers
         plot_model(self.model, to_file=save_dir+'/model.png') # plot graph
         self.model.compile(loss='categorical_crossentropy',
@@ -211,8 +222,10 @@ class CNN_2D:
     
 
     def classify(self, data):
-        return self.model.predict(data)
-
+        if len(data.shape) > 2:
+            return self.model.predict(data.reshape(-1, data.shape[1], data.shape[2], 1))
+        else:
+            return self.model.predict(data)
 
 class LSTM:
     """docstring for LSTM"""
@@ -379,8 +392,12 @@ class CNN_LSTM:
         self.n_classes = n_classes
 
     def train(self, X_train, y_train, X_val, y_val, n_batch, n_epochs, learning_rate, decay_rate, save_dir):
-        X_train_1D = X_train.reshape(-1,X_train.shape[1],1)
-        X_val_1D = X_val.reshape(-1,X_val.shape[1],1)
+        if len(X_train.shape) < 3:
+            X_train_1D = X_train.reshape(-1,X_train.shape[1],1)
+            X_val_1D = X_val.reshape(-1,X_val.shape[1],1)
+        else:
+            X_train_1D = X_train
+            X_val_1D = X_val
         print(self.model.summary()) # summarize layers
         plot_model(self.model, to_file=save_dir+'/model.png') # plot graph
         self.model.compile(loss='categorical_crossentropy',
@@ -395,5 +412,8 @@ class CNN_LSTM:
     
 
     def classify(self, data):
-        X_test_1D = data.reshape(-1,data.shape[1],1)
+        if len(data.shape) < 3:
+            X_test_1D = data.reshape(-1,data.shape[1],1)
+        else:
+            X_test_1D = data
         return self.model.predict(X_test_1D)
