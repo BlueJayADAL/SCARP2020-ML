@@ -68,13 +68,18 @@ class ModelLoader:
                            save_dir='models/saved/'):
         session = K.get_session
 
-        self.model.compile(optimizer='adam',
-                             loss='binary_crossentropy',  # Tries to minimize loss
-                             metrics=['accuracy'])
+        if "cnn" in self.filename:
+            self.model.compile(loss='categorical_crossentropy',
+                          optimizer=tf.keras.optimizers.Adam(lr=1e-3, decay=1e-5),
+                          metrics=['accuracy'])
+        else:
+            self.model.compile(optimizer='adam',
+                                 loss='binary_crossentropy',  # Tries to minimize loss
+                                 metrics=['accuracy'])
 
         frozen_graph = freeze_session(K.get_session(), output_names=[out.op.name for out in self.model.outputs])
 
-        tf.train.write_graph(frozen_graph, save_dir, "vino_" + self.filename.split("_")[1] + ".pb", as_text=False)
+        tf.io.write_graph(frozen_graph, save_dir, "vino_" + self.filename.split("_")[1] + ".pb", as_text=False)
 
     def load_vino_model(self,
                         load_dir='models/saved/'):

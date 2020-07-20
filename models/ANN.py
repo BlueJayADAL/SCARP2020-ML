@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
+from tensorflow_core.python.keras import Input
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
@@ -39,9 +40,13 @@ class ANN:
               save_model=True):
         # Create ANN classifier
         model = tf.keras.models.Sequential()
+
+        # Add input layer required for interpretation from OpenVINO
+        model.add(tf.keras.layers.Dense(64, input_shape=(self.X_train.shape[1],), activation='relu'))
+
         model.add(tf.keras.layers.Flatten())
         model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dense(32, activation=tf.nn.relu))
         model.add(tf.keras.layers.Dense(1, activation='sigmoid'))  # Probability distribution
 
         model.compile(optimizer='adam',

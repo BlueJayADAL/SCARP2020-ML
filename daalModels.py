@@ -78,6 +78,24 @@ def main():
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
 
+        # Handle SVM Model
+        elif args.model == 'svm':
+            # Setup SVM model
+            svm = daal_SVM(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_SVM', None)
+                loaded_model = ml.load_sk_daal_model()
+                svm.load_saved_model(loaded_model)
+            else:
+                svm.train()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+
         # Handle DAAL LR Model
         elif args.model == 'daallr':
             # Setup LR model
@@ -215,14 +233,12 @@ def main():
             if args.load:
                 pass
             else:
-                vino_ann_model.train()
+                vino_ann_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
-
-                vino_ann_model.train_model()
 
         # Handle VINO 1D-CNN Model
         elif args.model == 'vinocnn1d':

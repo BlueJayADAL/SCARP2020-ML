@@ -101,8 +101,16 @@ def convertToDefault(array):
     # Convert from one-hot to default format
     new_arr = np.zeros(array.shape[0])
     for i in range(array.shape[0]):
-        if array[i][0] > array[i][1]:
-            new_arr[i] = 0
+        # Handle ANN converting
+        if len(array[i]) < 2:
+            if array[i][0] < 0.5:
+                new_arr[i] = 0
+            else:
+                new_arr[i] = 1
+        # Handle CNN Converting
         else:
-            new_arr[i] = 1
+            if array[i][0] > array[i][1]:
+                new_arr[i] = 0
+            else:
+                new_arr[i] = 1
     return new_arr

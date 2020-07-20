@@ -1,0 +1,195 @@
+<?xml version="1.0" ?>
+<mapping>
+	<map>
+		<framework name="input_1" out_port_id="0"/>
+		<IR id="0" name="input_1" out_port_id="0"/>
+	</map>
+	<map>
+		<framework name="dropout/cond/Merge" out_port_id="0"/>
+		<IR id="22" name="max_pooling1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="dropout/cond/Identity" out_port_id="0"/>
+		<IR id="22" name="max_pooling1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="dropout/cond/Identity/Switch" out_port_id="0"/>
+		<IR id="22" name="max_pooling1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d/Squeeze" out_port_id="0"/>
+		<IR id="22" name="max_pooling1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d/conv1d" out_port_id="0"/>
+		<IR id="8" name="conv1d/conv1d/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d/Relu" out_port_id="0"/>
+		<IR id="13" name="conv1d/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d/ExpandDims/dim" out_port_id="0"/>
+		<IR id="14" name="max_pooling1d/ExpandDims/dim/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d/conv1d/ExpandDims_1" out_port_id="0"/>
+		<IR id="5" name="conv1d/conv1d/ExpandDims_1/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/Relu" out_port_id="0"/>
+		<IR id="35" name="conv1d_1/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_3/cond/Merge" out_port_id="0"/>
+		<IR id="56" name="FC2_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_3/cond/Identity" out_port_id="0"/>
+		<IR id="56" name="FC2_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_3/cond/Identity/Switch" out_port_id="0"/>
+		<IR id="56" name="FC2_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="FC2_layer/Relu" out_port_id="0"/>
+		<IR id="56" name="FC2_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="FC1_layer/MatMul/ReadVariableOp" out_port_id="0"/>
+		<IR id="47" name="FC1_layer/MatMul/1_port_transpose1465_const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="top_level_output/MatMul" out_port_id="0"/>
+		<IR id="58" name="top_level_output/MatMul" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="top_level_output/BiasAdd" out_port_id="0"/>
+		<IR id="60" name="top_level_output/BiasAdd/Add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d_1/ExpandDims" out_port_id="0"/>
+		<IR id="39" name="max_pooling1d_1/ExpandDims/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="flatten/Reshape" out_port_id="0"/>
+		<IR id="46" name="flatten/Reshape" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="FC1_layer/BiasAdd" out_port_id="0"/>
+		<IR id="50" name="FC1_layer/BiasAdd/Add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="top_level_output/Softmax" out_port_id="0"/>
+		<IR id="61" name="top_level_output/Softmax" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d_1/MaxPool" out_port_id="0"/>
+		<IR id="42" name="max_pooling1d_1/MaxPool/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="FC2_layer/MatMul" out_port_id="0"/>
+		<IR id="53" name="FC2_layer/MatMul" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="FC1_layer/MatMul" out_port_id="0"/>
+		<IR id="48" name="FC1_layer/MatMul" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="FC2_layer/MatMul/ReadVariableOp" out_port_id="0"/>
+		<IR id="52" name="FC2_layer/MatMul/1_port_transpose1469_const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d/conv1d/ExpandDims" out_port_id="0"/>
+		<IR id="4" name="conv1d/conv1d/ExpandDims/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/conv1d/Squeeze" out_port_id="0"/>
+		<IR id="32" name="conv1d_1/conv1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="FC2_layer/BiasAdd" out_port_id="0"/>
+		<IR id="55" name="FC2_layer/BiasAdd/Add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/conv1d/ExpandDims/dim" out_port_id="0"/>
+		<IR id="23" name="conv1d_1/conv1d/ExpandDims/dim/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_1/cond/Merge" out_port_id="0"/>
+		<IR id="44" name="max_pooling1d_1/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="dropout_1/cond/Identity" out_port_id="0"/>
+		<IR id="44" name="max_pooling1d_1/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="dropout_1/cond/Identity/Switch" out_port_id="0"/>
+		<IR id="44" name="max_pooling1d_1/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d_1/Squeeze" out_port_id="0"/>
+		<IR id="44" name="max_pooling1d_1/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/conv1d" out_port_id="0"/>
+		<IR id="30" name="conv1d_1/conv1d/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d_1/ExpandDims/dim" out_port_id="0"/>
+		<IR id="36" name="max_pooling1d_1/ExpandDims/dim/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d/conv1d/Squeeze" out_port_id="0"/>
+		<IR id="10" name="conv1d/conv1d/Squeeze" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d/MaxPool" out_port_id="0"/>
+		<IR id="20" name="max_pooling1d/MaxPool/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="max_pooling1d/ExpandDims" out_port_id="0"/>
+		<IR id="17" name="max_pooling1d/ExpandDims/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="dropout_2/cond/Merge" out_port_id="0"/>
+		<IR id="51" name="FC1_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_2/cond/Identity" out_port_id="0"/>
+		<IR id="51" name="FC1_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="dropout_2/cond/Identity/Switch" out_port_id="0"/>
+		<IR id="51" name="FC1_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="FC1_layer/Relu" out_port_id="0"/>
+		<IR id="51" name="FC1_layer/Relu" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/conv1d/ExpandDims" out_port_id="0"/>
+		<IR id="26" name="conv1d_1/conv1d/ExpandDims/Transpose" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/BiasAdd" out_port_id="0"/>
+		<IR id="34" name="conv1d_1/BiasAdd/Add" out_port_id="2"/>
+	</map>
+	<map>
+		<framework name="conv1d/conv1d/ExpandDims/dim" out_port_id="0"/>
+		<IR id="1" name="conv1d/conv1d/ExpandDims/dim/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="top_level_output/MatMul/ReadVariableOp" out_port_id="0"/>
+		<IR id="57" name="top_level_output/MatMul/1_port_transpose1473_const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d_1/conv1d/ExpandDims_1" out_port_id="0"/>
+		<IR id="27" name="conv1d_1/conv1d/ExpandDims_1/Output_0/Data__const" out_port_id="1"/>
+	</map>
+	<map>
+		<framework name="conv1d/BiasAdd" out_port_id="0"/>
+		<IR id="12" name="conv1d/BiasAdd/Add" out_port_id="2"/>
+	</map>
+</mapping>

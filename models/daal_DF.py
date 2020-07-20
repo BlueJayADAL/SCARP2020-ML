@@ -85,11 +85,11 @@ class daal_DF:
             ml.save_sk_daal_model()
 
     def load_saved_model(self, loaded_model):
-        # Begin test timing
-        startTime = time.time()
-
         # Flatten y
         testLabel = self.y_test.flatten()
+
+        # Begin test timing
+        startTime = time.time()
 
         # Create prediction class
         predictAlg = decision_forest_classification_prediction(2)

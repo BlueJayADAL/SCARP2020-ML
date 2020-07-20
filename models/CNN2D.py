@@ -148,12 +148,12 @@ class CNN2D:
             ml.save_keras_model()
 
     def load_saved_model(self, loaded_model):
-        # Start test timing
-        startTime = time.time()
-
         # Base settings for learning
         learning_rate = 1e-3
         decay_rate = 1e-5
+
+        # Start test timing
+        startTime = time.time()
 
         loaded_model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),

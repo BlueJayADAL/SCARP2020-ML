@@ -87,11 +87,11 @@ class daal_LR:
             ml.save_sk_daal_model()
 
     def load_saved_model(self, loaded_model):
-        # Begin test timing
-        startTime = time.time()
-
         # Flatten y
         testLabel = self.y_test.flatten()
+
+        # Begin test timing
+        startTime = time.time()
 
         # Create prediction class
         predictAlg = logistic_regression_prediction(nClasses=2)

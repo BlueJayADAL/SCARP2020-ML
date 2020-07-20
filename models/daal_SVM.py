@@ -102,11 +102,11 @@ class daal_SVM:
             ml.save_sk_daal_model()
 
     def load_saved_model(self, loaded_model):
-        # Begin test timing
-        startTime = time.time()
-
         # Flatten y
         testLabel = self.y_test.flatten()
+
+        # Begin test timing
+        startTime = time.time()
 
         # create prediction class
         kern = kernel_function_linear(method='defaultDense')

@@ -1,11 +1,8 @@
 import time
 
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 
-from sklearn import preprocessing, metrics
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from tensorflow.python.autograph.pyct import anno
 from tensorflow.python.keras import Input
@@ -13,8 +10,8 @@ from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatte
 from tensorflow.python.keras.models import Model
 
 from models.ModelLoader import ModelLoader
-from utils.helper import encode_label, convertToDefault, convertToOneHot, collect_statistics
-from utils.helper2 import read_dataset, one_hot
+from utils.helper import encode_label, convertToDefault, collect_statistics
+from utils.helper2 import one_hot
 
 
 class CNN1D:
@@ -156,12 +153,12 @@ class CNN1D:
             ml.save_keras_model()
 
     def load_saved_model(self, loaded_model):
-        # Start test timing
-        startTime = time.time()
-
         # Base settings for learning
         learning_rate = 1e-3
         decay_rate = 1e-5
+
+        # Start test timing
+        startTime = time.time()
 
         loaded_model.compile(loss='categorical_crossentropy',
                       optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
