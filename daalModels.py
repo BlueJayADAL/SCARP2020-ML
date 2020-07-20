@@ -73,7 +73,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 lr.load_saved_model(loaded_model)
             else:
-                lr.train()
+                acc,tpr,far,report=lr.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -90,7 +90,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 knn.load_saved_model(loaded_model)
             else:
-                knn.train()
+                acc,tpr,far,report=knn.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -108,7 +108,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 svm.load_saved_model(loaded_model)
             else:
-                svm.train()
+                acc,tpr,far,report=svm.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -126,7 +126,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 lr_daal.load_saved_model(loaded_model)
             else:
-                lr_daal.train()
+                acc,tpr,far,report= lr_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -144,7 +144,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 df_daal.load_saved_model(loaded_model)
             else:
-                df_daal.train()
+                acc,tpr,far,report=df_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -162,7 +162,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 svm_daal.load_saved_model(loaded_model)
             else:
-                svm_daal.train()
+                acc,tpr,far,report=svm_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -179,7 +179,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 knn_daal.load_saved_model(loaded_model)
             else:
-                knn_daal.train()
+                acc,tpr,far,report=knn_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -200,7 +200,7 @@ def main():
                 loaded_model = ml.load_keras_model()
                 ann_model.load_saved_model(loaded_model)
             else:
-                ann_model.train()
+                acc,tpr,far,report=ann_model.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -218,7 +218,7 @@ def main():
                 loaded_model = ml.load_keras_model()
                 cnn1d_model.load_saved_model(loaded_model)
             else:
-                cnn1d_model.train_model()
+                acc,tpr,far,report=cnn1d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -236,7 +236,7 @@ def main():
                 loaded_model = ml.load_keras_model()
                 cnn2d_model.load_saved_model(loaded_model)
             else:
-                cnn2d_model.train_model()
+                acc,tpr,far,report=cnn2d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -252,7 +252,7 @@ def main():
             if args.load:
                 pass
             else:
-                vino_ann_model.train_model()
+                acc,tpr,far,report=vino_ann_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -270,7 +270,7 @@ def main():
                 net, execNet = ml.load_vino_model()
                 vino_cnn1d_model.load_saved_model(net, execNet)
             else:
-                vino_cnn1d_model.train_model()
+                acc,tpr,far,report=vino_cnn1d_model.train_model()
 
         # Handle VINO 2D-CNN Model
         elif args.model == 'vinocnn2d':
@@ -283,8 +283,12 @@ def main():
                 net, execNet = ml.load_vino_model()
                 vino_cnn2d_model.load_saved_model(net, execNet)
             else:
-                vino_cnn2d_model.train_model()
+                acc,tpr,far,report=vino_cnn2d_model.train_model()
 
+    results = open("results.txt", "a")
+    outputs =["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean), "\nCPU Max: ", str(cpu_max),"\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ", str(far), "\n", str(report),"\n\n\n\n" ]
+    results.writelines(outputs)
+    results.close()
         # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 
 

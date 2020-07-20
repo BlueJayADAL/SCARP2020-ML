@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras import Input
+#from tensorflow_core.python.keras import Input
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
@@ -90,3 +90,4 @@ class ANN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr, test_far, test_report
