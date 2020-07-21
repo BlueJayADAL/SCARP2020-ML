@@ -2,8 +2,8 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras import Input
-from tensorflow_core.python.keras.layers import Embedding, LSTM, Dropout, Dense
+from tensorflow.python.keras import Input
+from tensorflow.python.keras.layers import Embedding, LSTM, Dropout, Dense
 
 from utils.helper import collect_statistics, convertToDefault
 from models.ModelLoader import ModelLoader
@@ -45,6 +45,10 @@ class RNN:
         print(self.X_train.shape)
         print(self.y_train.shape)
 
+
+        # Begin train timing
+        startTime = time.time()
+
         # Create ANN classifier
         model = tf.keras.models.Sequential()
 
@@ -71,6 +75,9 @@ class RNN:
         train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred)
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred)
 
+        # End train timing
+        endTime = time.time()
+
         print("Training and testing (Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
@@ -82,6 +89,7 @@ class RNN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr, test_far, test_report
 
         if save_model:
             # Save model to disk

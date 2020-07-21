@@ -2,8 +2,8 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras import Input
-from tensorflow_core.python.keras.layers import Dense, Flatten
+from tensorflow.python.keras import Input
+from tensorflow.python.keras.layers import Dense, Flatten
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
