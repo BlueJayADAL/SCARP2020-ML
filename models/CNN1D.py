@@ -179,4 +179,5 @@ class CNN1D:
         print(test_report)
         print("------------------------")
 
-        return loaded_model
+
+        return test_accu, test_tpr, test_far, test_report

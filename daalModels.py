@@ -75,12 +75,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 lr.load_saved_model(loaded_model)
             else:
-                lr.train()
+                acc,tpr,far,report=lr.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
         #hendles regular knn
         elif args.model == 'knn':
             # Setup knn model
@@ -92,12 +98,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 knn.load_saved_model(loaded_model)
             else:
-                knn.train()
+                acc,tpr,far,report=knn.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle SVM Model
         elif args.model == 'svm':
@@ -110,12 +122,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 svm.load_saved_model(loaded_model)
             else:
-                svm.train()
+                acc,tpr,far,report=svm.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle DAAL LR Model
         elif args.model == 'daallr':
@@ -128,12 +146,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 lr_daal.load_saved_model(loaded_model)
             else:
-                lr_daal.train()
+                acc,tpr,far,report= lr_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle DAAL DF Model
         elif args.model == 'daaldf':
@@ -146,12 +170,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 df_daal.load_saved_model(loaded_model)
             else:
-                df_daal.train()
+                acc,tpr,far,report=df_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle DAAL SVM Model
         elif args.model == 'daalsvm':
@@ -164,12 +194,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 svm_daal.load_saved_model(loaded_model)
             else:
-                svm_daal.train()
+                acc,tpr,far,report=svm_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle DAAL KNN Model
         elif args.model == 'daalknn':
@@ -181,12 +217,18 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 knn_daal.load_saved_model(loaded_model)
             else:
-                knn_daal.train()
+                acc,tpr,far,report=knn_daal.train()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
 
         # Non DAAL models can be found below
@@ -202,12 +244,18 @@ def main():
                 loaded_model = ml.load_keras_model()
                 ann_model.load_saved_model(loaded_model)
             else:
-                ann_model.train_model()
+                acc, tpr, far, report = ann_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle RNN Model
         elif args.model == 'rnn':
@@ -236,7 +284,12 @@ def main():
             if args.load:
                 ml = ModelLoader('model_cnn1d', None)
                 loaded_model = ml.load_keras_model()
-                cnn1d_model.load_saved_model(loaded_model)
+                acc, tpr, far, report = cnn1d_model.load_saved_model(loaded_model)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
             else:
                 cnn1d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
@@ -254,7 +307,13 @@ def main():
             if args.load:
                 ml = ModelLoader('model_cnn2d', None)
                 loaded_model = ml.load_keras_model()
-                cnn2d_model.load_saved_model(loaded_model)
+                acc, tpr, far, report = cnn2d_model.load_saved_model(loaded_model)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
+                           str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
             else:
                 cnn2d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
@@ -274,7 +333,7 @@ def main():
                 net, execNet = ml.load_vino_model()
                 vino_ann_model.load_saved_model(net, execNet)
             else:
-                vino_ann_model.train_model()
+                acc, tpr, far, report = vino_ann_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -308,7 +367,13 @@ def main():
             if args.load:
                 ml = ModelLoader('vino_cnn1d', None)
                 net, execNet = ml.load_vino_model()
-                vino_cnn1d_model.load_saved_model(net, execNet)
+                acc, tpr, far, report = vino_cnn1d_model.load_saved_model(net, execNet)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
+                           str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
             else:
                 vino_cnn1d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
@@ -326,7 +391,13 @@ def main():
             if args.load:
                 ml = ModelLoader('vino_cnn2d', None)
                 net, execNet = ml.load_vino_model()
-                vino_cnn2d_model.load_saved_model(net, execNet)
+                acc, tpr, far, report = vino_cnn2d_model.load_saved_model(net, execNet)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
+                           str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
             else:
                 vino_cnn2d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))

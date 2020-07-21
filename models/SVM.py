@@ -71,6 +71,7 @@ class LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr, test_far, test_report
 
         if save_model:
             ml = ModelLoader('model_SVM', svm)
@@ -96,3 +97,4 @@ class LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr, test_far, test_report

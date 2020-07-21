@@ -81,6 +81,7 @@ class daal_LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr,test_far,test_report
 
         if save_model:
             ml = ModelLoader('daal_LR', trainResult.model)
@@ -112,3 +113,4 @@ class daal_LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+        return test_accu, test_tpr, test_far, test_report

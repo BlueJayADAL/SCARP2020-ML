@@ -116,3 +116,5 @@ class ANN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+
+        return test_accu, test_tpr, test_far, test_report
