@@ -44,7 +44,7 @@ class kNN:
 
         nClasses = 2
 
-        # begin train timing
+        # Begin train timing
         startTime = time.time()
 
         # Create kNN Classifier

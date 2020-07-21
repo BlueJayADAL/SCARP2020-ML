@@ -5,6 +5,7 @@ from models.CNN1D import CNN1D
 from models.CNN2D import CNN2D
 from models.LR import LR
 from models.ModelLoader import ModelLoader
+from models.RNN import RNN
 from models.daal_DF import daal_DF
 from models.daal_LR import daal_LR
 from models.daal_SVM import daal_SVM
@@ -15,6 +16,7 @@ from models.vino_ANN import vino_ANN
 from models.kNN import kNN
 from models.vino_CNN1D import vino_CNN1D
 from models.vino_CNN2D import vino_CNN2D
+from models.vino_RNN import vino_RNN
 from utils.helper import read_csv_dataset
 from distutils import util
 
@@ -31,8 +33,8 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "cnn1d", "cnn2d", "vinoann", "vinocnn1d", "vinocnn2d"]:
-        print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, cnn1d, cnn2d, vinoann, vinocnn1d, vinocnn2d}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "rnn", "cnn1d", "cnn2d", "vinoann", "vinornn", "vinocnn1d", "vinocnn2d"]:
+        print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, rnn, cnn1d, cnn2d, vinoann, vinornn, vinocnn1d, vinocnn2d}. e.g. --model lr")
         return
     elif args.load not in ["true", "false"]:
         args.load = False
@@ -200,7 +202,25 @@ def main():
                 loaded_model = ml.load_keras_model()
                 ann_model.load_saved_model(loaded_model)
             else:
-                ann_model.train()
+                ann_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+
+        # Handle RNN Model
+        elif args.model == 'rnn':
+            # Setup RNN model
+            rnn_model = RNN(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_ann', None)
+                loaded_model = ml.load_keras_model()
+                rnn_model.load_saved_model(loaded_model)
+            else:
+                rnn_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -250,9 +270,29 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                pass
+                ml = ModelLoader('vino_ann', None)
+                net, execNet = ml.load_vino_model()
+                vino_ann_model.load_saved_model(net, execNet)
             else:
                 vino_ann_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+
+        # Handle VINO RNN Model
+        elif args.model == 'vinornn':
+            # Setup VINO ANN model
+            vino_rnn_model = vino_RNN(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('vino_rnn', None)
+                net, execNet = ml.load_vino_model()
+                vino_rnn_model.load_saved_model(net, execNet)
+            else:
+                vino_rnn_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -271,6 +311,11 @@ def main():
                 vino_cnn1d_model.load_saved_model(net, execNet)
             else:
                 vino_cnn1d_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         # Handle VINO 2D-CNN Model
         elif args.model == 'vinocnn2d':
@@ -284,6 +329,11 @@ def main():
                 vino_cnn2d_model.load_saved_model(net, execNet)
             else:
                 vino_cnn2d_model.train_model()
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
 
         # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
 

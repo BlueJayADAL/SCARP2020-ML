@@ -1,0 +1,1450 @@
+<?xml version="1.0" ?>
+<net name="vino_rnn" version="10">
+	<layers>
+		<layer id="0" name="lstm_input" type="Parameter" version="opset1">
+			<data element_type="f32" shape="22880,1,50"/>
+			<output>
+				<port id="0" precision="FP32">
+					<dim>22880</dim>
+					<dim>1</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="1" name="lstm/transpose/Cast_11400_const" type="Const" version="opset1">
+			<data element_type="i64" offset="0" shape="3" size="24"/>
+			<output>
+				<port id="1" precision="I64">
+					<dim>3</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="2" name="lstm/transpose" type="Transpose" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>1</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>3</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>1</dim>
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="3" name="lstm/while/Enter_2/Output_0/Data__const" type="Const" version="opset1">
+			<data element_type="f32" offset="24" shape="22880,50" size="4576000"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="4" name="lstm/while/Enter_3/Output_0/Data__const" type="Const" version="opset1">
+			<data element_type="f32" offset="24" shape="22880,50" size="4576000"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="5" name="lstm/while/LoopCond/TensorIteratorCondition_/TensorIterator" type="TensorIterator" version="opset1">
+			<input>
+				<port id="0">
+					<dim>1</dim>
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="2">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="3">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="4">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="5">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</input>
+			<output>
+				<port id="6" precision="FP32">
+					<dim>1</dim>
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+			<port_map>
+				<input axis="0" external_port_id="0" internal_layer_id="0"/>
+				<input external_port_id="2" internal_layer_id="19"/>
+				<input external_port_id="1" internal_layer_id="53"/>
+				<input external_port_id="3" internal_layer_id="41"/>
+				<input external_port_id="4" internal_layer_id="25"/>
+				<input external_port_id="5" internal_layer_id="7"/>
+				<output axis="0" external_port_id="6" internal_layer_id="70"/>
+			</port_map>
+			<back_edges>
+				<edge from-layer="67" to-layer="25"/>
+				<edge from-layer="48" to-layer="19"/>
+				<edge from-layer="67" to-layer="53"/>
+				<edge from-layer="67" to-layer="7"/>
+				<edge from-layer="67" to-layer="41"/>
+			</back_edges>
+			<body>
+				<layers>
+					<layer id="0" name="135" type="Parameter" version="opset1">
+						<data element_type="f32" shape="1,22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>1</dim>
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="1" name="128_const" type="Const" version="opset1">
+						<data element_type="i64" offset="4576024" shape="1" size="8"/>
+						<output>
+							<port id="1" precision="I64">
+								<dim>1</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="2" name="lstm/while/TensorArrayReadV3/Output_0/Data_/InputSqueeze" type="Squeeze" version="opset1">
+						<input>
+							<port id="0">
+								<dim>1</dim>
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>1</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="3" name="lstm/while/MatMul_1/1_port_transpose1387_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4592416" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="4" name="lstm/while/MatMul_1" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="5" name="lstm/while/split_1/Output_1/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4602416" shape="50" size="200"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="6" name="lstm/while/BiasAdd_1/Add" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="7" name="139" type="Parameter" version="opset1">
+						<data element_type="f32" shape="22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="8" name="lstm/while/MatMul_5/1_port_transpose1391_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4602616" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="9" name="lstm/while/MatMul_5" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="10" name="lstm/while/add_2" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="11" name="lstm/while/Const_4/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612616" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="12" name="lstm/while/Mul_1" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="13" name="lstm/while/Const_5/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612620" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="14" name="lstm/while/Add_3" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="15" name="lstm/while/clip_by_value_1/Minimum/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612624" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="16" name="lstm/while/clip_by_value_1/Minimum" type="Minimum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="17" name="lstm/while/clip_by_value_1/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612628" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="18" name="lstm/while/clip_by_value_1" type="Maximum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="19" name="145" type="Parameter" version="opset1">
+						<data element_type="f32" shape="22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="20" name="lstm/while/mul_2" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="21" name="lstm/while/MatMul/1_port_transpose1407_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612632" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="22" name="lstm/while/MatMul" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="23" name="lstm/while/split_1/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4622632" shape="50" size="200"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="24" name="lstm/while/BiasAdd/Add" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="25" name="137" type="Parameter" version="opset1">
+						<data element_type="f32" shape="22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="26" name="lstm/while/MatMul_4/1_port_transpose1399_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4622832" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="27" name="lstm/while/MatMul_4" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="28" name="lstm/while/add" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="29" name="lstm/while/Const_2/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612616" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="30" name="lstm/while/Mul" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="31" name="lstm/while/Const_3/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612620" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="32" name="lstm/while/Add_1" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="33" name="lstm/while/clip_by_value/Minimum/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612624" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="34" name="lstm/while/clip_by_value/Minimum" type="Minimum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="35" name="lstm/while/clip_by_value/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612628" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="36" name="lstm/while/clip_by_value" type="Maximum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="37" name="lstm/while/MatMul_2/1_port_transpose1383_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4632832" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="38" name="lstm/while/MatMul_2" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="39" name="lstm/while/split_1/Output_2/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4642832" shape="50" size="200"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="40" name="lstm/while/BiasAdd_2/Add" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="41" name="141" type="Parameter" version="opset1">
+						<data element_type="f32" shape="22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="42" name="lstm/while/MatMul_6/1_port_transpose1403_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4643032" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="43" name="lstm/while/MatMul_6" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="44" name="lstm/while/add_4" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="45" name="lstm/while/Tanh" type="Tanh" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="46" name="lstm/while/mul_3" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="47" name="lstm/while/add_5" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="48" name="lstm/while/add_5/Output_0/Data_/sink_port_0" type="Result" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+					</layer>
+					<layer id="49" name="lstm/while/MatMul_3/1_port_transpose1395_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4653032" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="50" name="lstm/while/MatMul_3" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="51" name="lstm/while/split_1/Output_3/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4663032" shape="50" size="200"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="52" name="lstm/while/BiasAdd_3/Add" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="53" name="143" type="Parameter" version="opset1">
+						<data element_type="f32" shape="22880,50"/>
+						<output>
+							<port id="0" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="54" name="lstm/while/MatMul_7/1_port_transpose1379_const" type="Const" version="opset1">
+						<data element_type="f32" offset="4663232" shape="50,50" size="10000"/>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="55" name="lstm/while/MatMul_7" type="MatMul" version="opset1">
+						<data transpose_a="False" transpose_b="True"/>
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>50</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="56" name="lstm/while/add_6" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="57" name="lstm/while/Const_6/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612616" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="58" name="lstm/while/Mul_4" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="59" name="lstm/while/Const_7/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612620" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="60" name="lstm/while/Add_7" type="Add" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="61" name="lstm/while/clip_by_value_2/Minimum/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612624" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="62" name="lstm/while/clip_by_value_2/Minimum" type="Minimum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="63" name="lstm/while/clip_by_value_2/y/Output_0/Data__const" type="Const" version="opset1">
+						<data element_type="f32" offset="4612628" shape="" size="4"/>
+						<output>
+							<port id="1" precision="FP32"/>
+						</output>
+					</layer>
+					<layer id="64" name="lstm/while/clip_by_value_2" type="Maximum" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1"/>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="65" name="lstm/while/Tanh_1" type="Tanh" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="1" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="66" name="lstm/while/mul_5" type="Multiply" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="67" name="lstm/while/mul_5/Output_0/Data_/sink_port_0" type="Result" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+					</layer>
+					<layer id="68" name="131_const" type="Const" version="opset1">
+						<data element_type="i64" offset="4576024" shape="1" size="8"/>
+						<output>
+							<port id="1" precision="I64">
+								<dim>1</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="69" name="lstm/while/mul_5/Output_0/Data_/OutputUnsqueeze" type="Unsqueeze" version="opset1">
+						<input>
+							<port id="0">
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+							<port id="1">
+								<dim>1</dim>
+							</port>
+						</input>
+						<output>
+							<port id="2" precision="FP32">
+								<dim>1</dim>
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</output>
+					</layer>
+					<layer id="70" name="133/sink_port_0" type="Result" version="opset1">
+						<input>
+							<port id="0">
+								<dim>1</dim>
+								<dim>22880</dim>
+								<dim>50</dim>
+							</port>
+						</input>
+					</layer>
+				</layers>
+				<edges>
+					<edge from-layer="0" from-port="0" to-layer="2" to-port="0"/>
+					<edge from-layer="1" from-port="1" to-layer="2" to-port="1"/>
+					<edge from-layer="2" from-port="2" to-layer="4" to-port="0"/>
+					<edge from-layer="3" from-port="1" to-layer="4" to-port="1"/>
+					<edge from-layer="4" from-port="2" to-layer="6" to-port="0"/>
+					<edge from-layer="5" from-port="1" to-layer="6" to-port="1"/>
+					<edge from-layer="7" from-port="0" to-layer="9" to-port="0"/>
+					<edge from-layer="8" from-port="1" to-layer="9" to-port="1"/>
+					<edge from-layer="6" from-port="2" to-layer="10" to-port="0"/>
+					<edge from-layer="9" from-port="2" to-layer="10" to-port="1"/>
+					<edge from-layer="10" from-port="2" to-layer="12" to-port="0"/>
+					<edge from-layer="11" from-port="1" to-layer="12" to-port="1"/>
+					<edge from-layer="12" from-port="2" to-layer="14" to-port="0"/>
+					<edge from-layer="13" from-port="1" to-layer="14" to-port="1"/>
+					<edge from-layer="14" from-port="2" to-layer="16" to-port="0"/>
+					<edge from-layer="15" from-port="1" to-layer="16" to-port="1"/>
+					<edge from-layer="16" from-port="2" to-layer="18" to-port="0"/>
+					<edge from-layer="17" from-port="1" to-layer="18" to-port="1"/>
+					<edge from-layer="18" from-port="2" to-layer="20" to-port="0"/>
+					<edge from-layer="19" from-port="0" to-layer="20" to-port="1"/>
+					<edge from-layer="2" from-port="2" to-layer="22" to-port="0"/>
+					<edge from-layer="21" from-port="1" to-layer="22" to-port="1"/>
+					<edge from-layer="22" from-port="2" to-layer="24" to-port="0"/>
+					<edge from-layer="23" from-port="1" to-layer="24" to-port="1"/>
+					<edge from-layer="25" from-port="0" to-layer="27" to-port="0"/>
+					<edge from-layer="26" from-port="1" to-layer="27" to-port="1"/>
+					<edge from-layer="24" from-port="2" to-layer="28" to-port="0"/>
+					<edge from-layer="27" from-port="2" to-layer="28" to-port="1"/>
+					<edge from-layer="28" from-port="2" to-layer="30" to-port="0"/>
+					<edge from-layer="29" from-port="1" to-layer="30" to-port="1"/>
+					<edge from-layer="30" from-port="2" to-layer="32" to-port="0"/>
+					<edge from-layer="31" from-port="1" to-layer="32" to-port="1"/>
+					<edge from-layer="32" from-port="2" to-layer="34" to-port="0"/>
+					<edge from-layer="33" from-port="1" to-layer="34" to-port="1"/>
+					<edge from-layer="34" from-port="2" to-layer="36" to-port="0"/>
+					<edge from-layer="35" from-port="1" to-layer="36" to-port="1"/>
+					<edge from-layer="2" from-port="2" to-layer="38" to-port="0"/>
+					<edge from-layer="37" from-port="1" to-layer="38" to-port="1"/>
+					<edge from-layer="38" from-port="2" to-layer="40" to-port="0"/>
+					<edge from-layer="39" from-port="1" to-layer="40" to-port="1"/>
+					<edge from-layer="41" from-port="0" to-layer="43" to-port="0"/>
+					<edge from-layer="42" from-port="1" to-layer="43" to-port="1"/>
+					<edge from-layer="40" from-port="2" to-layer="44" to-port="0"/>
+					<edge from-layer="43" from-port="2" to-layer="44" to-port="1"/>
+					<edge from-layer="44" from-port="2" to-layer="45" to-port="0"/>
+					<edge from-layer="36" from-port="2" to-layer="46" to-port="0"/>
+					<edge from-layer="45" from-port="1" to-layer="46" to-port="1"/>
+					<edge from-layer="20" from-port="2" to-layer="47" to-port="0"/>
+					<edge from-layer="46" from-port="2" to-layer="47" to-port="1"/>
+					<edge from-layer="47" from-port="2" to-layer="48" to-port="0"/>
+					<edge from-layer="2" from-port="2" to-layer="50" to-port="0"/>
+					<edge from-layer="49" from-port="1" to-layer="50" to-port="1"/>
+					<edge from-layer="50" from-port="2" to-layer="52" to-port="0"/>
+					<edge from-layer="51" from-port="1" to-layer="52" to-port="1"/>
+					<edge from-layer="53" from-port="0" to-layer="55" to-port="0"/>
+					<edge from-layer="54" from-port="1" to-layer="55" to-port="1"/>
+					<edge from-layer="52" from-port="2" to-layer="56" to-port="0"/>
+					<edge from-layer="55" from-port="2" to-layer="56" to-port="1"/>
+					<edge from-layer="56" from-port="2" to-layer="58" to-port="0"/>
+					<edge from-layer="57" from-port="1" to-layer="58" to-port="1"/>
+					<edge from-layer="58" from-port="2" to-layer="60" to-port="0"/>
+					<edge from-layer="59" from-port="1" to-layer="60" to-port="1"/>
+					<edge from-layer="60" from-port="2" to-layer="62" to-port="0"/>
+					<edge from-layer="61" from-port="1" to-layer="62" to-port="1"/>
+					<edge from-layer="62" from-port="2" to-layer="64" to-port="0"/>
+					<edge from-layer="63" from-port="1" to-layer="64" to-port="1"/>
+					<edge from-layer="47" from-port="2" to-layer="65" to-port="0"/>
+					<edge from-layer="64" from-port="2" to-layer="66" to-port="0"/>
+					<edge from-layer="65" from-port="1" to-layer="66" to-port="1"/>
+					<edge from-layer="66" from-port="2" to-layer="67" to-port="0"/>
+					<edge from-layer="66" from-port="2" to-layer="69" to-port="0"/>
+					<edge from-layer="68" from-port="1" to-layer="69" to-port="1"/>
+					<edge from-layer="69" from-port="2" to-layer="70" to-port="0"/>
+				</edges>
+			</body>
+		</layer>
+		<layer id="6" name="lstm/strided_slice_7/Squeeze_shrink/Indices781_const" type="Const" version="opset1">
+			<data element_type="i64" offset="4576024" shape="1" size="8"/>
+			<output>
+				<port id="1" precision="I64">
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="7" name="lstm/strided_slice_7/Squeeze_shrink" type="Squeeze" version="opset1">
+			<input>
+				<port id="0">
+					<dim>1</dim>
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="8" name="dense/MatMul/1_port_transpose1157_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4576032" shape="50,50" size="10000"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>50</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="9" name="dense/MatMul" type="MatMul" version="opset1">
+			<data transpose_a="False" transpose_b="True"/>
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>50</dim>
+					<dim>50</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="10" name="dense/BiasAdd/ReadVariableOp/Output_0/Data_/copy_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4586032" shape="1,50" size="200"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="11" name="dense/BiasAdd/Add" type="Add" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+					<dim>50</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="12" name="dense/Relu" type="ReLU" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="13" name="dense_1/MatMul/1_port_transpose1165_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4586232" shape="25,50" size="5000"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>25</dim>
+					<dim>50</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="14" name="dense_1/MatMul" type="MatMul" version="opset1">
+			<data transpose_a="False" transpose_b="True"/>
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>50</dim>
+				</port>
+				<port id="1">
+					<dim>25</dim>
+					<dim>50</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="15" name="dense_1/BiasAdd/ReadVariableOp/Output_0/Data_/copy_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4591232" shape="1,25" size="100"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>25</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="16" name="dense_1/BiasAdd/Add" type="Add" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+					<dim>25</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="17" name="dense_1/Relu" type="ReLU" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="18" name="dense_2/MatMul/1_port_transpose1169_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4591332" shape="10,25" size="1000"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>10</dim>
+					<dim>25</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="19" name="dense_2/MatMul" type="MatMul" version="opset1">
+			<data transpose_a="False" transpose_b="True"/>
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>25</dim>
+				</port>
+				<port id="1">
+					<dim>10</dim>
+					<dim>25</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="20" name="dense_2/BiasAdd/ReadVariableOp/Output_0/Data_/copy_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4592332" shape="1,10" size="40"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>10</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="21" name="dense_2/BiasAdd/Add" type="Add" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+					<dim>10</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="22" name="dense_2/Relu" type="ReLU" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="23" name="dense_3/MatMul/1_port_transpose1161_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4592372" shape="1,10" size="40"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>10</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="24" name="dense_3/MatMul" type="MatMul" version="opset1">
+			<data transpose_a="False" transpose_b="True"/>
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>10</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+					<dim>10</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="25" name="dense_3/BiasAdd/ReadVariableOp/Output_0/Data_/copy_const" type="Const" version="opset1">
+			<data element_type="f32" offset="4592412" shape="1,1" size="4"/>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="26" name="dense_3/BiasAdd/Add" type="Add" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+				<port id="1">
+					<dim>1</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="27" name="dense_3/Sigmoid" type="Sigmoid" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="28" name="dense_3/Sigmoid/sink_port_0" type="Result" version="opset1">
+			<input>
+				<port id="0">
+					<dim>22880</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+		</layer>
+	</layers>
+	<edges>
+		<edge from-layer="0" from-port="0" to-layer="2" to-port="0"/>
+		<edge from-layer="1" from-port="1" to-layer="2" to-port="1"/>
+		<edge from-layer="2" from-port="2" to-layer="5" to-port="0"/>
+		<edge from-layer="3" from-port="1" to-layer="5" to-port="1"/>
+		<edge from-layer="4" from-port="1" to-layer="5" to-port="2"/>
+		<edge from-layer="3" from-port="1" to-layer="5" to-port="3"/>
+		<edge from-layer="3" from-port="1" to-layer="5" to-port="4"/>
+		<edge from-layer="3" from-port="1" to-layer="5" to-port="5"/>
+		<edge from-layer="5" from-port="6" to-layer="7" to-port="0"/>
+		<edge from-layer="6" from-port="1" to-layer="7" to-port="1"/>
+		<edge from-layer="7" from-port="2" to-layer="9" to-port="0"/>
+		<edge from-layer="8" from-port="1" to-layer="9" to-port="1"/>
+		<edge from-layer="9" from-port="2" to-layer="11" to-port="0"/>
+		<edge from-layer="10" from-port="1" to-layer="11" to-port="1"/>
+		<edge from-layer="11" from-port="2" to-layer="12" to-port="0"/>
+		<edge from-layer="12" from-port="1" to-layer="14" to-port="0"/>
+		<edge from-layer="13" from-port="1" to-layer="14" to-port="1"/>
+		<edge from-layer="14" from-port="2" to-layer="16" to-port="0"/>
+		<edge from-layer="15" from-port="1" to-layer="16" to-port="1"/>
+		<edge from-layer="16" from-port="2" to-layer="17" to-port="0"/>
+		<edge from-layer="17" from-port="1" to-layer="19" to-port="0"/>
+		<edge from-layer="18" from-port="1" to-layer="19" to-port="1"/>
+		<edge from-layer="19" from-port="2" to-layer="21" to-port="0"/>
+		<edge from-layer="20" from-port="1" to-layer="21" to-port="1"/>
+		<edge from-layer="21" from-port="2" to-layer="22" to-port="0"/>
+		<edge from-layer="22" from-port="1" to-layer="24" to-port="0"/>
+		<edge from-layer="23" from-port="1" to-layer="24" to-port="1"/>
+		<edge from-layer="24" from-port="2" to-layer="26" to-port="0"/>
+		<edge from-layer="25" from-port="1" to-layer="26" to-port="1"/>
+		<edge from-layer="26" from-port="2" to-layer="27" to-port="0"/>
+		<edge from-layer="27" from-port="1" to-layer="28" to-port="0"/>
+	</edges>
+	<meta_data>
+		<MO_version value=""/>
+		<cli_parameters>
+			<blobs_as_inputs value="True"/>
+			<data_type value="float"/>
+			<disable_nhwc_to_nchw value="False"/>
+			<disable_resnet_optimization value="False"/>
+			<disable_weights_compression value="False"/>
+			<enable_concat_optimization value="False"/>
+			<extensions value="DIR"/>
+			<framework value="tf"/>
+			<freeze_placeholder_with_value value="{}"/>
+			<generate_deprecated_IR_V2 value="False"/>
+			<generate_deprecated_IR_V7 value="False"/>
+			<generate_experimental_IR_V10 value="True"/>
+			<input_model value="DIR/vino_rnn.pb"/>
+			<input_model_is_text value="False"/>
+			<input_shape value="[22880,1,50]"/>
+			<keep_quantize_ops_in_IR value="True"/>
+			<keep_shape_ops value="False"/>
+			<log_level value="ERROR"/>
+			<mean_scale_values value="{}"/>
+			<mean_values value="()"/>
+			<model_name value="vino_rnn"/>
+			<move_to_preprocess value="False"/>
+			<output_dir value="DIR"/>
+			<placeholder_data_types value="{}"/>
+			<placeholder_shapes value="[22880     1    50]"/>
+			<progress value="False"/>
+			<reverse_input_channels value="False"/>
+			<scale_values value="()"/>
+			<silent value="False"/>
+			<stream_output value="False"/>
+			<unset unset_cli_parameters="batch, disable_fusing, disable_gfusing, finegrain_fusing, input, input_checkpoint, input_meta_graph, output, saved_model_dir, saved_model_tags, scale, tensorboard_logdir, tensorflow_custom_layer_libraries, tensorflow_custom_operations_config_update, tensorflow_object_detection_api_pipeline_config, tensorflow_use_custom_operations_config, transformations_config"/>
+		</cli_parameters>
+	</meta_data>
+</net>

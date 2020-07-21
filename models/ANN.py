@@ -3,6 +3,7 @@ import time
 import numpy as np
 import tensorflow as tf
 from tensorflow_core.python.keras import Input
+from tensorflow_core.python.keras.layers import Dense, Flatten
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
@@ -36,24 +37,49 @@ class ANN:
         self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
-    def train(self,
-              save_model=True):
+    def train_model(self,
+                    save_model=True):
+        # Begin train timing
+        startTime = time.time()
+
         # Create ANN classifier
         model = tf.keras.models.Sequential()
 
         # Add input layer required for interpretation from OpenVINO
-        model.add(tf.keras.layers.Dense(64, input_shape=(self.X_train.shape[1],), activation='relu'))
+        model.add(Dense(64, input_shape=(self.X_train.shape[1],), activation='relu'))
 
-        model.add(tf.keras.layers.Flatten())
-        model.add(tf.keras.layers.Dense(64, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dense(32, activation=tf.nn.relu))
-        model.add(tf.keras.layers.Dense(1, activation='sigmoid'))  # Probability distribution
+        model.add(Flatten())
+        model.add(Dense(64, activation=tf.nn.relu))
+        model.add(Dense(32, activation=tf.nn.relu))
+        model.add(Dense(1, activation='sigmoid'))  # Probability distribution
 
         model.compile(optimizer='adam',
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
         model.fit(self.X_train, self.y_train, epochs=50, batch_size=32, validation_split=0.1)
+
+        y_train_pred = model.predict(self.X_train)
+        y_test_pred = model.predict(self.X_test)
+
+        # End train timing
+        endTime = time.time()
+
+        # Collect statistics
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, y_train_pred)
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_test_pred)
+
+        print("Training and testing (Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Training Results ---")
+        print("Train accuracy: ", train_accu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")
 
         if save_model:
             # Save model to disk
