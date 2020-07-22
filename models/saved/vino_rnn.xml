@@ -92,18 +92,18 @@
 				</port>
 			</output>
 			<port_map>
-				<input axis="0" external_port_id="0" internal_layer_id="0"/>
 				<input external_port_id="2" internal_layer_id="19"/>
-				<input external_port_id="1" internal_layer_id="53"/>
-				<input external_port_id="3" internal_layer_id="41"/>
-				<input external_port_id="4" internal_layer_id="25"/>
-				<input external_port_id="5" internal_layer_id="7"/>
+				<input external_port_id="1" internal_layer_id="7"/>
+				<input external_port_id="3" internal_layer_id="53"/>
+				<input external_port_id="4" internal_layer_id="41"/>
+				<input axis="0" external_port_id="0" internal_layer_id="0"/>
+				<input external_port_id="5" internal_layer_id="25"/>
 				<output axis="0" external_port_id="6" internal_layer_id="70"/>
 			</port_map>
 			<back_edges>
 				<edge from-layer="67" to-layer="25"/>
-				<edge from-layer="48" to-layer="19"/>
 				<edge from-layer="67" to-layer="53"/>
+				<edge from-layer="48" to-layer="19"/>
 				<edge from-layer="67" to-layer="7"/>
 				<edge from-layer="67" to-layer="41"/>
 			</back_edges>
@@ -145,7 +145,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="3" name="lstm/while/MatMul_1/1_port_transpose1387_const" type="Const" version="opset1">
+					<layer id="3" name="lstm/while/MatMul_1/1_port_transpose1403_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4592416" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -207,7 +207,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="8" name="lstm/while/MatMul_5/1_port_transpose1391_const" type="Const" version="opset1">
+					<layer id="8" name="lstm/while/MatMul_5/1_port_transpose1407_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4602616" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -364,7 +364,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="21" name="lstm/while/MatMul/1_port_transpose1407_const" type="Const" version="opset1">
+					<layer id="21" name="lstm/while/MatMul/1_port_transpose1379_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4612632" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -426,7 +426,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="26" name="lstm/while/MatMul_4/1_port_transpose1399_const" type="Const" version="opset1">
+					<layer id="26" name="lstm/while/MatMul_4/1_port_transpose1387_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4622832" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -556,7 +556,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="37" name="lstm/while/MatMul_2/1_port_transpose1383_const" type="Const" version="opset1">
+					<layer id="37" name="lstm/while/MatMul_2/1_port_transpose1399_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4632832" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -618,7 +618,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="42" name="lstm/while/MatMul_6/1_port_transpose1403_const" type="Const" version="opset1">
+					<layer id="42" name="lstm/while/MatMul_6/1_port_transpose1395_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4643032" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -722,7 +722,7 @@
 							</port>
 						</input>
 					</layer>
-					<layer id="49" name="lstm/while/MatMul_3/1_port_transpose1395_const" type="Const" version="opset1">
+					<layer id="49" name="lstm/while/MatMul_3/1_port_transpose1391_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4653032" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -784,7 +784,7 @@
 							</port>
 						</output>
 					</layer>
-					<layer id="54" name="lstm/while/MatMul_7/1_port_transpose1379_const" type="Const" version="opset1">
+					<layer id="54" name="lstm/while/MatMul_7/1_port_transpose1383_const" type="Const" version="opset1">
 						<data element_type="f32" offset="4663232" shape="50,50" size="10000"/>
 						<output>
 							<port id="1" precision="FP32">
@@ -1162,7 +1162,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="13" name="dense_1/MatMul/1_port_transpose1165_const" type="Const" version="opset1">
+		<layer id="13" name="dense_1/MatMul/1_port_transpose1161_const" type="Const" version="opset1">
 			<data element_type="f32" offset="4586232" shape="25,50" size="5000"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -1231,7 +1231,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="18" name="dense_2/MatMul/1_port_transpose1169_const" type="Const" version="opset1">
+		<layer id="18" name="dense_2/MatMul/1_port_transpose1165_const" type="Const" version="opset1">
 			<data element_type="f32" offset="4591332" shape="10,25" size="1000"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -1300,7 +1300,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="23" name="dense_3/MatMul/1_port_transpose1161_const" type="Const" version="opset1">
+		<layer id="23" name="dense_3/MatMul/1_port_transpose1169_const" type="Const" version="opset1">
 			<data element_type="f32" offset="4592372" shape="1,10" size="40"/>
 			<output>
 				<port id="1" precision="FP32">

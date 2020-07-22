@@ -228,7 +228,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="13" name="max_pooling2d_1/MaxPool/Transpose/Cast_11196_const" type="Const" version="opset1">
+		<layer id="13" name="max_pooling2d_1/MaxPool/Transpose/Cast_11194_const" type="Const" version="opset1">
 			<data element_type="i64" offset="1057792" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -257,7 +257,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="15" name="flatten/Reshape/Cast_11194_const" type="Const" version="opset1">
+		<layer id="15" name="flatten/Reshape/Cast_11196_const" type="Const" version="opset1">
 			<data element_type="i64" offset="1057824" shape="2" size="16"/>
 			<output>
 				<port id="1" precision="I64">
@@ -354,7 +354,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="22" name="FC2_layer/MatMul/1_port_transpose963_const" type="Const" version="opset1">
+		<layer id="22" name="FC2_layer/MatMul/1_port_transpose955_const" type="Const" version="opset1">
 			<data element_type="f32" offset="1451568" shape="128,128" size="65536"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -423,7 +423,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="27" name="top_level_output/MatMul/1_port_transpose955_const" type="Const" version="opset1">
+		<layer id="27" name="top_level_output/MatMul/1_port_transpose963_const" type="Const" version="opset1">
 			<data element_type="f32" offset="1517616" shape="2,128" size="1024"/>
 			<output>
 				<port id="1" precision="FP32">

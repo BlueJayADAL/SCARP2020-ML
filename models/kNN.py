@@ -1,7 +1,6 @@
 import time
 import numpy as np
 
-from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 
 from utils.helper import collect_statistics

@@ -264,7 +264,7 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('model_ann', None)
+                ml = ModelLoader('model_rnn', None)
                 loaded_model = ml.load_keras_model()
                 rnn_model.load_saved_model(loaded_model)
             else:

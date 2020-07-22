@@ -10,7 +10,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="1" name="dense/MatMul/1_port_transpose556_const" type="Const" version="opset1">
+		<layer id="1" name="dense/MatMul/1_port_transpose564_const" type="Const" version="opset1">
 			<data element_type="f32" offset="0" shape="64,50" size="12800"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -105,7 +105,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="8" name="dense_1/MatMul/1_port_transpose552_const" type="Const" version="opset1">
+		<layer id="8" name="dense_1/MatMul/1_port_transpose556_const" type="Const" version="opset1">
 			<data element_type="f32" offset="13072" shape="64,64" size="16384"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -174,7 +174,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="13" name="dense_2/MatMul/1_port_transpose564_const" type="Const" version="opset1">
+		<layer id="13" name="dense_2/MatMul/1_port_transpose552_const" type="Const" version="opset1">
 			<data element_type="f32" offset="29712" shape="32,64" size="8192"/>
 			<output>
 				<port id="1" precision="FP32">

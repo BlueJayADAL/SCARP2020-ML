@@ -2,8 +2,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras import Input
-from tensorflow_core.python.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
@@ -57,7 +56,7 @@ class ANN:
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
-        model.fit(self.X_train, self.y_train, epochs=50, batch_size=32, validation_split=0.1)
+        model.fit(self.X_train, self.y_train, epochs=1, batch_size=32, validation_split=0.1)
 
         y_train_pred = model.predict(self.X_train)
         y_test_pred = model.predict(self.X_test)
@@ -66,8 +65,8 @@ class ANN:
         endTime = time.time()
 
         # Collect statistics
-        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, y_train_pred)
-        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_test_pred)
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred.flatten())
 
         print("Training and testing (Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")

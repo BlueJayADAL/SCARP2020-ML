@@ -5,9 +5,10 @@ import tensorflow as tf
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from tensorflow.python.autograph.pyct import anno
-from tensorflow.python.keras import Input
-from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dense
-from tensorflow.python.keras.models import Model
+from tensorflow.keras import Input
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dense
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
 from models.ModelLoader import ModelLoader
 from utils.helper import encode_label, convertToDefault, collect_statistics
@@ -161,7 +162,7 @@ class CNN1D:
         startTime = time.time()
 
         loaded_model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
+                      optimizer=Adam(lr=learning_rate, decay=decay_rate),
                       metrics=['accuracy'])
 
         y_pred = loaded_model.predict(self.X_test_1D)

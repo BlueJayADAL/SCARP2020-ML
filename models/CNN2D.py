@@ -1,18 +1,16 @@
 import time
 
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential, Model, model_from_json
-from tensorflow.keras.layers import Input, Dense, Dropout, concatenate, Flatten, Conv2D, MaxPooling2D
-from tensorflow.python.autograph.pyct import anno
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.optimizers import Adam
 
 from models.ModelLoader import ModelLoader
 from utils.helper import encode_label, collect_statistics, convertToDefault
-from utils.helper2 import read_dataset, one_hot
+from utils.helper2 import one_hot
 
 
 class CNN2D:
@@ -141,7 +139,7 @@ class CNN2D:
         # End train timing
         endTime = time.time()
 
-        print("Training (Convolutional 1D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training (Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
 
         if save_model:
             ml = ModelLoader('model_cnn2d', model)
@@ -156,7 +154,7 @@ class CNN2D:
         startTime = time.time()
 
         loaded_model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
+                      optimizer=Adam(lr=learning_rate, decay=decay_rate),
                       metrics=['accuracy'])
 
         y_pred = loaded_model.predict(self.X_test_2D)

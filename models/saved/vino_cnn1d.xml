@@ -39,7 +39,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="3" name="conv1d/conv1d/ExpandDims/Transpose/Cast_12005_const" type="Const" version="opset1">
+		<layer id="3" name="conv1d/conv1d/ExpandDims/Transpose/Cast_12003_const" type="Const" version="opset1">
 			<data element_type="i64" offset="8" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -104,7 +104,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="7" name="conv1d/conv1d/Transpose/Cast_11999_const" type="Const" version="opset1">
+		<layer id="7" name="conv1d/conv1d/Transpose/Cast_12005_const" type="Const" version="opset1">
 			<data element_type="i64" offset="2088" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -236,7 +236,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="16" name="max_pooling1d/ExpandDims/Transpose/Cast_11997_const" type="Const" version="opset1">
+		<layer id="16" name="max_pooling1d/ExpandDims/Transpose/Cast_12001_const" type="Const" version="opset1">
 			<data element_type="i64" offset="8" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -284,7 +284,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="19" name="max_pooling1d/MaxPool/Transpose/Cast_11991_const" type="Const" version="opset1">
+		<layer id="19" name="max_pooling1d/MaxPool/Transpose/Cast_11997_const" type="Const" version="opset1">
 			<data element_type="i64" offset="2088" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -369,7 +369,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="25" name="conv1d_1/conv1d/ExpandDims/Transpose/Cast_11989_const" type="Const" version="opset1">
+		<layer id="25" name="conv1d_1/conv1d/ExpandDims/Transpose/Cast_11999_const" type="Const" version="opset1">
 			<data element_type="i64" offset="8" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -434,7 +434,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="29" name="conv1d_1/conv1d/Transpose/Cast_12001_const" type="Const" version="opset1">
+		<layer id="29" name="conv1d_1/conv1d/Transpose/Cast_11993_const" type="Const" version="opset1">
 			<data element_type="i64" offset="2088" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -566,7 +566,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="38" name="max_pooling1d_1/ExpandDims/Transpose/Cast_11995_const" type="Const" version="opset1">
+		<layer id="38" name="max_pooling1d_1/ExpandDims/Transpose/Cast_11991_const" type="Const" version="opset1">
 			<data element_type="i64" offset="8" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -614,7 +614,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="41" name="max_pooling1d_1/MaxPool/Transpose/Cast_11993_const" type="Const" version="opset1">
+		<layer id="41" name="max_pooling1d_1/MaxPool/Transpose/Cast_11995_const" type="Const" version="opset1">
 			<data element_type="i64" offset="2088" shape="4" size="32"/>
 			<output>
 				<port id="1" precision="I64">
@@ -671,7 +671,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="45" name="flatten/Reshape/Cast_12003_const" type="Const" version="opset1">
+		<layer id="45" name="flatten/Reshape/Cast_11989_const" type="Const" version="opset1">
 			<data element_type="i64" offset="265296" shape="2" size="16"/>
 			<output>
 				<port id="1" precision="I64">
@@ -767,7 +767,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="52" name="FC2_layer/MatMul/1_port_transpose1469_const" type="Const" version="opset1">
+		<layer id="52" name="FC2_layer/MatMul/1_port_transpose1473_const" type="Const" version="opset1">
 			<data element_type="f32" offset="1117792" shape="128,128" size="65536"/>
 			<output>
 				<port id="1" precision="FP32">
@@ -836,7 +836,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="57" name="top_level_output/MatMul/1_port_transpose1473_const" type="Const" version="opset1">
+		<layer id="57" name="top_level_output/MatMul/1_port_transpose1469_const" type="Const" version="opset1">
 			<data element_type="f32" offset="1183840" shape="2,128" size="1024"/>
 			<output>
 				<port id="1" precision="FP32">

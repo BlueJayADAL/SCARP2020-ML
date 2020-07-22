@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow.python.keras.models import model_from_json
 from tensorflow.python.keras import backend as K
 from openvino.inference_engine import IECore, IENetwork
+from tensorflow_core.python.keras.optimizers import Adam
 
 from utils.helper import freeze_session
 
@@ -70,7 +71,7 @@ class ModelLoader:
 
         if "cnn" in self.filename:
             self.model.compile(loss='categorical_crossentropy',
-                          optimizer=tf.keras.optimizers.Adam(lr=1e-3, decay=1e-5),
+                          optimizer=Adam(lr=1e-3, decay=1e-5),
                           metrics=['accuracy'])
         else:
             self.model.compile(optimizer='adam',

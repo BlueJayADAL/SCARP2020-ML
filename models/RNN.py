@@ -2,8 +2,8 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras import Input
-from tensorflow_core.python.keras.layers import Embedding, LSTM, Dropout, Dense
+from tensorflow.python.keras.layers import LSTM, Dropout, Dense
+from tensorflow.keras.optimizers import Adam
 
 from utils.helper import collect_statistics, convertToDefault
 from models.ModelLoader import ModelLoader
@@ -42,31 +42,34 @@ class RNN:
 
     def train_model(self,
               save_model=True):
-        print(self.X_train.shape)
-        print(self.y_train.shape)
+        # Begin train timing
+        startTime = time.time()
 
         # Create ANN classifier
         model = tf.keras.models.Sequential()
 
         # Add input layer required for interpretation from OpenVINO
         model.add(LSTM(units=50, input_shape=(self.X_train.shape[1], self.X_train.shape[2]), return_sequences=False))
-
         model.add(Dropout(0.2))
-        model.add(Dense(50, activation='relu'))
-        model.add(Dense(25, activation='relu'))
-        model.add(Dense(10, activation='relu'))
+
+        model.add(Dense(64, activation='relu'))
+        model.add(Dense(32, activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
 
-        model.compile(optimizer='adam',
+        model.compile(optimizer=Adam(lr=1e-3, decay=1e-5),
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
-        model.fit(self.X_train, self.y_train, epochs=1, batch_size=32, validation_split=0.1)
+        model.fit(self.X_train, self.y_train, epochs=3, batch_size=32, validation_split=0.1)
 
-        y_train_pred = convertToDefault(model.predict(self.X_train))
-        y_test_pred = convertToDefault(model.predict(self.X_test))
-        print(y_train_pred.shape)
-        print(self.y_train.shape)
+        y_train_pred = model.predict(self.X_train)
+        y_test_pred = model.predict(self.X_test)
+
+        # End train timing
+        endTime = time.time()
+
+        y_train_pred = convertToDefault(y_train_pred)
+        y_test_pred = convertToDefault(y_test_pred)
 
         train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred)
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred)
@@ -99,11 +102,12 @@ class RNN:
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
+        y_pred = loaded_model.predict(self.X_test)
+
         # End test timing
         endTime = time.time()
 
-        y_pred = loaded_model.predict_classes(self.X_test)
-
+        y_pred = convertToDefault(y_pred)
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
 

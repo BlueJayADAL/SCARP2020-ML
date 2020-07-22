@@ -1,14 +1,11 @@
 import os
 import time
 
-import numpy as np
-
 from models.ANN import ANN
 from models.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork, IEPlugin
 
-from utils.helper import convertToOneHot, collect_statistics, convertToDefault
-from utils.helper2 import one_hot
+from utils.helper import collect_statistics, convertToDefault
 
 
 class vino_ANN:
