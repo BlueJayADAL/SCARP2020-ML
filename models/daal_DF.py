@@ -38,8 +38,8 @@ class daal_DF:
         self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
-    def train(self,
-              save_model=True):
+    def train_model(self,
+                    save_model=True):
         # Begin train timing
         startTime = time.time()
 
@@ -79,11 +79,12 @@ class daal_DF:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
-        return test_accu, test_tpr, test_far, test_report
 
         if save_model:
-            ml = ModelLoader('daal_DF', trainResult.model)
+            ml = ModelLoader('daal_df', trainResult.model)
             ml.save_sk_daal_model()
+
+        return test_accu, test_tpr, test_far, test_report
 
     def load_saved_model(self, loaded_model):
         # Flatten y
@@ -115,4 +116,5 @@ class daal_DF:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+
         return test_accu, test_tpr, test_far, test_report

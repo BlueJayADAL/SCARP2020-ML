@@ -136,14 +136,33 @@ class CNN2D:
         history = model.fit(self.X_train_2D, one_hot(self.y_train, self.n_classes_top), batch_size=n_batch, epochs=n_epochs,
                             validation_data=(self.X_test_2D, one_hot(self.y_test, self.n_classes_top)))
 
+        y_train_pred = model.predict(self.X_train_2D)
+        y_test_pred = model.predict(self.X_test_2D)
+
         # End train timing
         endTime = time.time()
 
-        print("Training (Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        # Collect Statistics
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, convertToDefault(y_train_pred))
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(y_test_pred))
+
+        print("Training and testing (Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Training Results ---")
+        print("Train accuracy: ", train_accu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")
 
         if save_model:
             ml = ModelLoader('model_cnn2d', model)
             ml.save_keras_model()
+
+        return test_accu, test_tpr, test_far, test_report
 
     def load_saved_model(self, loaded_model):
         # Base settings for learning

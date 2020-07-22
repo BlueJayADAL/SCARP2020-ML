@@ -1,8 +1,7 @@
 import time
 import numpy as np
 
-from _daal4py import logistic_regression_training, logistic_regression_prediction, kdtree_knn_classification_training, \
-    kdtree_knn_classification_prediction
+from _daal4py import kdtree_knn_classification_training, kdtree_knn_classification_prediction
 
 from utils.helper import collect_statistics
 from models.ModelLoader import ModelLoader
@@ -38,8 +37,8 @@ class daal_kNN:
         self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
-    def train(self,
-              save_model=True):
+    def train_model(self,
+                    save_model=True):
 
         nClasses = 2
 
@@ -82,11 +81,12 @@ class daal_kNN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
-        return test_accu, test_tpr, test_far, test_report
 
         if save_model:
-            ml = ModelLoader('daal_kNN', trainResult.model)
+            ml = ModelLoader('daal_knn', trainResult.model)
             ml.save_sk_daal_model()
+
+        return test_accu, test_tpr, test_far, test_report
 
     def load_saved_model(self, loaded_model):
         # Begin test timing
@@ -113,4 +113,5 @@ class daal_kNN:
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
         print("------------------------")
+
         return test_accu, test_tpr, test_far, test_report

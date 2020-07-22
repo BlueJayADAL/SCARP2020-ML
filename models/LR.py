@@ -38,8 +38,8 @@ class LR:
         self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:].flatten()
 
-    def train(self,
-              save_model=True):
+    def train_model(self,
+                    save_model=True):
 
         nClasses = 2
 
@@ -73,11 +73,12 @@ class LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
-        return test_accu, test_tpr, test_far, test_report
 
         if save_model:
-            ml = ModelLoader('model_LR', logreg)
+            ml = ModelLoader('model_lr', logreg)
             ml.save_sk_daal_model()
+
+        return test_accu, test_tpr, test_far, test_report
 
     def load_saved_model(self, loaded_model):
         # Begin test timing
@@ -99,4 +100,5 @@ class LR:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+
         return test_accu, test_tpr, test_far, test_report

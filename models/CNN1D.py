@@ -144,14 +144,33 @@ class CNN1D:
                             epochs=n_epochs,
                             validation_data=(self.X_test_1D, one_hot(self.y_test, self.n_classes_top)))
 
+        y_train_pred = model.predict(self.X_train_1D)
+        y_test_pred = model.predict(self.X_test_1D)
+
         # End train timing
         endTime = time.time()
 
-        print("Training (Convolutional 1D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        # Collect Statistics
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, convertToDefault(y_train_pred))
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(y_test_pred))
+
+        print("Training and testing (Convolutional 1D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("--- Training Results ---")
+        print("Train accuracy: ", train_accu)
+        print("TPR: ", train_tpr)
+        print("FAR: ", train_far)
+        print("--- Testing Results  ---")
+        print("Test accuracy: ", test_accu)
+        print("TPR: ", test_tpr)
+        print("FAR: ", test_far)
+        print(test_report)
+        print("------------------------")
 
         if save_model:
             ml = ModelLoader('model_cnn1d', model)
             ml.save_keras_model()
+
+        return test_accu, test_tpr, test_far, test_report
 
     def load_saved_model(self, loaded_model):
         # Base settings for learning
@@ -179,6 +198,5 @@ class CNN1D:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
-
 
         return test_accu, test_tpr, test_far, test_report

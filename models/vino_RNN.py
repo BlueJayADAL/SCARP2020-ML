@@ -5,8 +5,7 @@ from models.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork, IEPlugin
 
 from models.RNN import RNN
-from utils.helper import convertToOneHot, collect_statistics, convertToDefault
-from utils.helper2 import one_hot
+from utils.helper import collect_statistics, convertToDefault
 
 
 class vino_RNN:
@@ -92,4 +91,5 @@ class vino_RNN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+
         return test_accu, test_tpr, test_far, test_report

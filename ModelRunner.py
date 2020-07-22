@@ -22,12 +22,12 @@ from distutils import util
 
 
 def main():
-    parser = argparse.ArgumentParser(description="NetML Challenge 2020 Random Forest Classifier Baseline",
-                                     add_help=True)
+    parser = argparse.ArgumentParser(description="SCARP Project Model Run Command", add_help=True)
     parser.add_argument('-d', '--dataset', action="store", help="Dataset")
-    parser.add_argument('-m', '--model', action="store")
-    parser.add_argument('-l', '--load', action="store")
-    parser.add_argument('-r', '--runs', action="store", help="how many runs?")
+    parser.add_argument('-m', '--model', action="store", help="Model")
+    parser.add_argument('-l', '--load', action="store", help="To load the model")
+    parser.add_argument('-s', '--save', action="store", help="To save the model")
+    parser.add_argument('-r', '--runs', action="store", help="How many runs?")
     args = parser.parse_args()
 
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
@@ -36,16 +36,27 @@ def main():
     elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "rnn", "cnn1d", "cnn2d", "vinoann", "vinornn", "vinocnn1d", "vinocnn2d"]:
         print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, rnn, cnn1d, cnn2d, vinoann, vinornn, vinocnn1d, vinocnn2d}. e.g. --model lr")
         return
-    elif args.load not in ["true", "false"]:
-        args.load = False
+    elif args.runs is None:
+        print("Please select a valid amount of runs: {1, 2, 3...etc}. e.g. --runs 1")
+        return
     else:
-        # run_num is amout of times model is going to be tested
+        # If all arguments are successful
+
+        # run_num is amount of times model is going to be tested
         run_num = args.runs
         run_num = int(run_num)
-        if args.load is not False:
-            # Convert load argument to boolean
+
+        # Convert load argument to True / False
+        if args.load not in ["true", "false"]:
+            args.load = False
+        else:
             args.load = bool(util.strtobool(args.load))
-        # If all arguments are succsessful
+
+        # Convert save argument to True / False
+        if args.save not in ["true", "false"]:
+            args.save = False
+        else:
+            args.save = bool(util.strtobool(args.save))
 
         # Choose correct dataset via paths below
         if args.dataset == "NetML":
@@ -57,25 +68,24 @@ def main():
         p = psutil.Process()
         cpu_reads.append(p.cpu_percent(interval=None))
 
-
         # Setup data and labels from csv file
         data, labels = read_csv_dataset(args.dataset)
         cpu_reads.append(p.cpu_percent(interval=None))
 
         # Train respective model based on arguments provided from command
 
-        # Handle LR Model:
+        # Handle LR Model
         if args.model == 'lr':
             # Setup LR model
             lr = LR(data, labels)
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('model_LR', None)
+                ml = ModelLoader('model_lr', None)
                 loaded_model = ml.load_sk_daal_model()
                 lr.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=lr.train()
+                acc, tpr, far, report = lr.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -87,7 +97,8 @@ def main():
                            str(far), "\n", str(report), "\n\n\n\n"]
                 results.writelines(outputs)
                 results.close()
-        #hendles regular knn
+
+        # Handle KNN Model
         elif args.model == 'knn':
             # Setup knn model
             knn = kNN(data, labels)
@@ -98,7 +109,7 @@ def main():
                 loaded_model = ml.load_sk_daal_model()
                 knn.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=knn.train()
+                acc, tpr, far, report = knn.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -118,11 +129,11 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('model_SVM', None)
+                ml = ModelLoader('model_svm', None)
                 loaded_model = ml.load_sk_daal_model()
                 svm.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=svm.train()
+                acc, tpr, far, report = svm.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -142,11 +153,11 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('daal_LR', None)
+                ml = ModelLoader('daal_lr', None)
                 loaded_model = ml.load_sk_daal_model()
                 lr_daal.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report= lr_daal.train()
+                acc, tpr, far, report = lr_daal.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -166,11 +177,11 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('daal_DF', None)
+                ml = ModelLoader('daal_df', None)
                 loaded_model = ml.load_sk_daal_model()
                 df_daal.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=df_daal.train()
+                acc, tpr, far, report = df_daal.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -190,11 +201,11 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('daal_SVM', None)
+                ml = ModelLoader('daal_svm', None)
                 loaded_model = ml.load_sk_daal_model()
                 svm_daal.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=svm_daal.train()
+                acc, tpr, far, report = svm_daal.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -213,11 +224,11 @@ def main():
 
             # Handle training / loading of model
             if args.load:
-                ml = ModelLoader('daal_kNN', None)
+                ml = ModelLoader('daal_knn', None)
                 loaded_model = ml.load_sk_daal_model()
                 knn_daal.load_saved_model(loaded_model)
             else:
-                acc,tpr,far,report=knn_daal.train()
+                acc,tpr,far,report=knn_daal.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -229,7 +240,6 @@ def main():
                            str(far), "\n", str(report), "\n\n\n\n"]
                 results.writelines(outputs)
                 results.close()
-
 
         # Non DAAL models can be found below
 
@@ -244,7 +254,7 @@ def main():
                 loaded_model = ml.load_keras_model()
                 ann_model.load_saved_model(loaded_model)
             else:
-                acc, tpr, far, report = ann_model.train_model()
+                acc, tpr, far, report = ann_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -268,7 +278,7 @@ def main():
                 loaded_model = ml.load_keras_model()
                 rnn_model.load_saved_model(loaded_model)
             else:
-                acc, tpr, far, report =rnn_model.train_model()
+                acc, tpr, far, report = rnn_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -297,7 +307,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                cnn1d_model.train_model()
+                acc, tpr, far, report = cnn1d_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -321,7 +331,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                cnn2d_model.train_model()
+                acc, tpr, far, report = cnn2d_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -355,7 +365,7 @@ def main():
             if args.load:
                 ml = ModelLoader('vino_rnn', None)
                 net, execNet = ml.load_vino_model()
-                acc, tpr, far, report =vino_rnn_model.load_saved_model(net, execNet)
+                acc, tpr, far, report = vino_rnn_model.load_saved_model(net, execNet)
                 results = open("results.txt", "a")
                 outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
                            str(tpr), "\nFAR: ",
@@ -363,7 +373,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                vino_rnn_model.train_model()
+                acc, tpr, far, report = vino_rnn_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -385,7 +395,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                vino_cnn1d_model.train_model()
+                acc, tpr, far, report = vino_cnn1d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -416,7 +426,7 @@ def main():
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
 
-        # python daalModels.py --dataset NetML --model cnn2d --load false --runs 1
+        # python ModelRunner.py --dataset NetML --model cnn2d --load false --runs 1
 
 
 main()

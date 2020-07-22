@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.python.keras.layers import LSTM, Dropout, Dense
+from tensorflow.keras.layers import LSTM, Dropout, Dense
 from tensorflow.keras.optimizers import Adam
 
 from utils.helper import collect_statistics, convertToDefault
@@ -120,3 +120,5 @@ class RNN:
         print("FAR: ", test_far)
         print(test_report)
         print("------------------------")
+
+        return test_accu, test_tpr, test_far, test_report

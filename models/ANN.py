@@ -85,6 +85,8 @@ class ANN:
             ml = ModelLoader('model_ann', model)
             ml.save_keras_model()
 
+        return test_accu, test_tpr, test_far, test_report
+
     def load_saved_model(self, loaded_model):
         """
         Compiles loaded model and tests for accuracy
