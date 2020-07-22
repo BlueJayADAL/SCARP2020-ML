@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Flatten
 
-from utils.helper import collect_statistics
+from utils.helper import collect_statistics, convertToDefault
 from models.ModelLoader import ModelLoader
 
 
@@ -56,13 +56,16 @@ class ANN:
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
-        model.fit(self.X_train, self.y_train, epochs=1, batch_size=32, validation_split=0.1)
+        model.fit(self.X_train, self.y_train, epochs=3, batch_size=32, validation_split=0.1)
 
         y_train_pred = model.predict(self.X_train)
         y_test_pred = model.predict(self.X_test)
 
         # End train timing
         endTime = time.time()
+
+        y_train_pred = convertToDefault(y_train_pred)
+        y_test_pred = convertToDefault(y_test_pred)
 
         # Collect statistics
         train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred.flatten())
@@ -98,21 +101,19 @@ class ANN:
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
-        score = loaded_model.evaluate(self.X_test, self.y_test, verbose=0)
-
-        testAccu = loaded_model.metrics_names[1], score[1]*100
+        y_pred = loaded_model.predict(self.X_test)
 
         # End test timing
         endTime = time.time()
 
-        y_pred = loaded_model.predict_classes(self.X_test)
+        y_pred = convertToDefault(y_pred)
 
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
 
         print("Test (ANN) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
-        print("Test accuracy: ", testAccu)
+        print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
         print(test_report)

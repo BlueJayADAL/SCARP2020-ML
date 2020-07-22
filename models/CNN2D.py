@@ -68,7 +68,7 @@ class CNN2D:
         decay_rate = 1e-5
         dropout_rate = 0.5
         n_batch = 64
-        n_epochs = 1  # Loop 10 times on the dataset
+        n_epochs = 3  # Loop 3 times on the dataset
         filters = 128
         kernel_size = 4
         strides = 1

@@ -75,7 +75,7 @@ class vino_CNN2D:
 
         ml = ModelLoader('vino_cnn2d', None)
         net, execNet = ml.load_vino_model()
-        self.load_saved_model(net, execNet)
+        return self.load_saved_model(net, execNet)
 
     def load_saved_model(self, net, execNet,
                          work_dir='models/saved/'):
