@@ -47,13 +47,13 @@ def main():
         run_num = int(run_num)
 
         # Convert load argument to True / False
-        if args.load not in ["true", "false"]:
+        if args.load is None or args.load.lower() not in ["t", "f", "true", "false"]:
             args.load = False
         else:
             args.load = bool(util.strtobool(args.load))
 
         # Convert save argument to True / False
-        if args.save not in ["true", "false"]:
+        if args.save is None or args.save.lower() not in ["t", "f", "true", "false"]:
             args.save = False
         else:
             args.save = bool(util.strtobool(args.save))

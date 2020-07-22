@@ -70,7 +70,7 @@ class daal_kNN:
         train_tpr, train_far, train_accu, train_report = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
         test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
-        print("Training and test (kNN) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training and test (K Nearest Neighbors) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -107,7 +107,7 @@ class daal_kNN:
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
-        print("Test (kNN) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (K Nearest Neighbors) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)
