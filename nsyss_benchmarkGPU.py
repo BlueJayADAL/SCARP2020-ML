@@ -13,6 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel
 from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
 from utils.sklearn_models import LR, RF, SVM, MLP, kNN
+from utils.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
 
 def matrix_to3D(X_train, X_test):
     dim1 = X_train.shape[1]
@@ -134,16 +135,24 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
         elif modelname == "LR":
             model = LR()
+        elif modelname == "daal_LR":
+            model = daal_LR()
 
         elif modelname == "kNN":
             model = kNN(n=n_neighbors)
+        elif modelname == "daal_kNN":
+            model = daal_kNN(k=n_neighbors)
 
         elif modelname == "RF":
             model = RF(n=n_estimators, m=max_depth)
+        elif modelname == "daal_DF":
+            model = daal_DF(n=n_estimators, m=max_depth)
 
         elif modelname == "SVM":
             model = SVM(C=C, kernel=svm_kernel)
-        
+        elif modelname == "daal_SVM":
+            model = daal_SVM(C=C, kernel=svm_kernel)
+               
         elif modelname == "MLP":
             model = MLP(solver=mlp_solver, hidden_units=mlp_hidden_units)
 
@@ -197,7 +206,10 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             t_classify_0 = t.time()
             ypred = model.classify(X_test)
             Performance["t_classify"].append(t.time()-t_classify_0)
-            Performance["acc"].append(model.model.score(X_test, y_test))
+            try:
+                Performance["acc"].append(model.model.score(X_test, y_test))
+            except: # DAAL models don't have score :
+                Performance["acc"].append(np.sum(ypred == y_test)/len(y_train))
             np.set_printoptions(precision=2)
 
             # Plot normalized confusion matrix
@@ -216,8 +228,13 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             with open(save_dir_k + '/'+ modelname+'.txt', 'w') as file:
                 for k,v in sorted(save_dict.items()):
                     file.write("{} \t: {}\n".format(k,v))
-                file.write("Train Accuracy \t: {:.5f} \n".format(model.model.score(X_train, y_train)))
-                file.write("Validation Accuracy \t: {:.5f} \n".format(model.model.score(X_test, y_test)))
+                try:
+                    file.write("Train Accuracy \t: {:.5f} \n".format(model.model.score(X_train, y_train)))
+                    file.write("Validation Accuracy \t: {:.5f} \n".format(model.model.score(X_test, y_test)))
+                except: # DAAL models don't have score :
+                    file.write("Train Accuracy \t: {:.5f} \n".format(np.sum(model.classify(X_train) == y_train)/len(y_train)))
+                    file.write("Validation Accuracy \t: {:.5f} \n".format(np.sum(ypred == y_test)/len(y_test)))
+
 
     Performance["t_train_mean"] = sum(Performance["t_train"])/len(Performance["t_train"])
     Performance["t_classify_mean"] = sum(Performance["t_classify"])/len(Performance["t_classify"])
