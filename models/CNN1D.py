@@ -191,7 +191,7 @@ class CNN1D:
 
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, convertToDefault(y_pred))
 
-        print("Testing (Convolutional 2D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Testing (Convolutional 1D Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)

@@ -3,6 +3,7 @@ import psutil
 
 from models.CNN1D import CNN1D
 from models.CNN2D import CNN2D
+from models.CNNLSTM import CNNLSTM
 from models.LR import LR
 from models.ModelLoader import ModelLoader
 from models.RNN import RNN
@@ -33,8 +34,8 @@ def main():
     if args.dataset is None or args.dataset not in ["NetML", "CICIDS"]:
         print("No valid dataset set or annotations found!")
         return
-    elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "rnn", "cnn1d", "cnn2d", "vinoann", "vinornn", "vinocnn1d", "vinocnn2d"]:
-        print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, rnn, cnn1d, cnn2d, vinoann, vinornn, vinocnn1d, vinocnn2d}. e.g. --model lr")
+    elif args.model not in ["lr", "df", "svm", "knn", "daallr", "daaldf", "daalsvm", "daalknn", "ann", "rnn", "cnnlstm", "cnn1d", "cnn2d", "vinoann", "vinornn", "vinocnn1d", "vinocnn2d"]:
+        print("Please select one of these for model: {lr, df, svm, knn, daallr, daaldf, daalsvm, daalknn, ann, rnn, cnnlstm, cnn1d, cnn2d, vinoann, vinornn, vinocnn1d, vinocnn2d}. e.g. --model lr")
         return
     elif args.runs is None:
         print("Please select a valid amount of runs: {1, 2, 3...etc}. e.g. --runs 1")
@@ -279,6 +280,30 @@ def main():
                 rnn_model.load_saved_model(loaded_model)
             else:
                 acc, tpr, far, report = rnn_model.train_model(save_model=args.save)
+                cpu_reads.append(p.cpu_percent(interval=None))
+                cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
+                cpu_max = max(cpu_reads)
+                print("Cpu Mean:", cpu_mean)
+                print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                            "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                            str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
+
+        # Handle CNN-LSTM Model
+        elif args.model == 'cnnlstm':
+            # Setup CNN-LSTM model
+            cnnlstm_model = CNNLSTM(data, labels)
+
+            # Handle training / loading of model
+            if args.load:
+                ml = ModelLoader('model_rnn', None)
+                loaded_model = ml.load_keras_model()
+                cnnlstm_model.load_saved_model(loaded_model)
+            else:
+                acc, tpr, far, report = cnnlstm_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)

@@ -61,7 +61,7 @@ class vino_RNN:
 
         ml = ModelLoader('vino_rnn', None)
         net, execNet = ml.load_vino_model()
-        self.load_saved_model(net, execNet)
+        return self.load_saved_model(net, execNet)
 
     def load_saved_model(self, net, execNet,
                          work_dir='models/saved/'):
@@ -76,7 +76,7 @@ class vino_RNN:
         res = execNet.infer(inputs={input_blob: self.X_test})
 
         # Get prediction results
-        res = res['dense_3/Sigmoid']
+        res = res['dense_2/Sigmoid']
 
         # End testing time
         endTime = time.time()

@@ -26,8 +26,6 @@ class ModelLoader:
         # Save weights into model
         self.model.save_weights(save_dir + self.filename + '.h5')
 
-        print('Successfully saved model to disk as ' + self.filename + '.json!')
-
     def load_keras_model(self,
                          load_dir='models/saved/'):
         """
@@ -40,8 +38,6 @@ class ModelLoader:
 
         # Load weights into model
         loaded_model.load_weights(load_dir + self.filename + '.h5')
-
-        print('Successfully loaded model ' + self.filename + '.json from disk!')
 
         self.model = loaded_model
 
@@ -80,7 +76,7 @@ class ModelLoader:
 
         frozen_graph = freeze_session(K.get_session(), output_names=[out.op.name for out in self.model.outputs])
 
-        tf.io.write_graph(frozen_graph, save_dir, "vino_" + self.filename.split("_")[1] + ".pb", as_text=False)
+        tf.io.write_graph(frozen_graph, save_dir, self.filename + ".pb", as_text=False)
 
     def load_vino_model(self,
                         load_dir='models/saved/'):

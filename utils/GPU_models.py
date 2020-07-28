@@ -29,6 +29,7 @@ class CNN_1D:
         # Model Definition
         #raw_inputs = Input(shape=(X_train.shape[1],1,))
         raw_inputs = Input(shape=input_shape)
+        print("INPUT SHAPE:", input_shape)
         xcnn = Conv1D(filters, 
                         (kernel_size),
                         padding='same',

@@ -10,7 +10,8 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel
+from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D
+from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
 from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
 from utils.sklearn_models import LR, RF, SVM, MLP, kNN
 from utils.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
@@ -66,7 +67,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
     # Read data
     #dataset = "NetML" # NetML or CICIDS2017
-    df = pd.read_csv(dataset+"_enc_filtered_top50.csv")
+    df = pd.read_csv("data/"+dataset+"_enc_filtered_top50.csv")
 
     # Standardize the data
     y = df.pop('label').values
@@ -74,6 +75,10 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
     X = scaler.fit_transform(df.values)
 
     Performance["preprocessing time"] = t.time()-t_prep
+
+    # Set folds = 1 if vino model
+    if "vino" in modelname:
+        num_folds = 2
 
     # Arrange folds
     skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=42)
@@ -99,9 +104,16 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     CNN_layers=2, 
                     clf_reg=1e-4)
 
+        elif modelname == "vino_1D_CNN":
+            print("SIZE:", X_train.shape)
+            lastModelDir = findLastModelDir(dataset, "1D_CNN")
+            model = vino_CNN_1D(input_shape=(X_test.shape[0], X_test.shape[1], 1),
+                                save_dir=save_dir_k + "/",
+                                load_dir=lastModelDir)
+
         elif modelname == "2D_CNN":
             X_train, X_test = matrix_to3D(X_train, X_test)
-            model = CNN_2D(input_shape=(X_train.shape[1],X_train.shape[2],1), 
+            model = CNN_2D(input_shape=(X_train.shape[0],X_train.shape[1],1),
                     n_classes=2,                  
                     filters=128, 
                     kernel_size=3,
@@ -110,6 +122,12 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     dropout_rate=0.5, 
                     CNN_layers=2, 
                     clf_reg=1e-4)
+
+            # TODO Still working on finishing this up, will have all vino models converted by tomorrow!
+
+        elif modelname == "vino_2D_CNN":
+            X_train, X_test = matrix_to3D(X_train, X_test)
+            model = vino_CNN_2D(input_shape=(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
 
         elif modelname == "LSTM":
             X_train, X_test = matrix_to3D(X_train, X_test)
@@ -198,6 +216,46 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             # Save the trained model and its hyperparameters
             saveModel(save_dir_k, model.model, save_dict, history)
 
+        elif modelname in ["vino_1D_CNN", "vino_2D_CNN", "vino_LSTM", "vino_CNN+LSTM"]:
+            t_train_0 = t.time()
+            model.train()
+            Performance["t_train"].append(t.time() - t_train_0)
+
+            t_classify_0 = t.time()
+
+            data = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
+            ypred = model.classify(X_test)
+            Performance["t_classify"].append(t.time() - t_classify_0)
+            try:
+                Performance["acc"].append(model.model.score(X_test, y_test))
+            except:  # VINO models don't have score :
+                Performance["acc"].append(np.sum(ypred == y_test) / len(y_train))
+            np.set_printoptions(precision=2)
+
+            # Plot normalized confusion matrix
+            _, _, results = plot_confusion_matrix(directory=save_dir_k, y_true=y_test, y_pred=ypred,
+                                                  classes=['benign', 'malware'],
+                                                  normalize=False)
+
+            Performance["tpr"].append(results["TPR"])
+            Performance["far"].append(results["FAR"])
+
+            # No loss plot
+
+            # Model saving included
+
+            # Save some stuff
+            with open(save_dir_k + '/' + modelname + '.txt', 'w') as file:
+                for k, v in sorted(save_dict.items()):
+                    file.write("{} \t: {}\n".format(k, v))
+                try:
+                    file.write("Train Accuracy \t: {:.5f} \n".format(model.model.score(X_train, y_train)))
+                    file.write("Validation Accuracy \t: {:.5f} \n".format(model.model.score(X_test, y_test)))
+                except:  # VINO models don't have score :
+                    file.write("Train Accuracy \t: {:.5f} \n".format(
+                        np.sum(model.classify(X_train) == y_train) / len(y_train)))
+                    file.write("Validation Accuracy \t: {:.5f} \n".format(np.sum(ypred == y_test) / len(y_test)))
+
         else: # ML model
             t_train_0 = t.time()
             model.train(X_train, y_train)
@@ -273,7 +331,7 @@ def main():
     
     mem_by_model = {}
 
-    modelnames = ["LR", "RF", "kNN", "SVM", "MLP"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
+    modelnames = ["vino_1D_CNN"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
 
     dataset = "NetML" # NetML or CICIDS2017
 

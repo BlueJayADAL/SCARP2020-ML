@@ -439,3 +439,35 @@ def saveModel(save_dir, model, save_dict, history):
         file.write("Model Summary\t:\n{}\n\n".format(summary_string))
     print("Model saved !")
 
+
+def findLastModelDir(dataset, model_name):
+    lastFileDir = getLastModelSave(dataset, model_name)
+    lastFold = getLastFoldSave(lastFileDir)
+
+    return lastFileDir + "/" + str(lastFold) + "/"
+
+def getLastModelSave(dataset, model_name):
+    """
+    Gets the last ran model's folder path
+    """
+    lastTime = None
+    for filename in os.listdir("./results/" + dataset + "/"):
+        if filename.startswith(model_name):
+            time_string = filename[(len(model_name) + 1):]
+            time = t.strptime(time_string, "%Y%m%d-%H%M%S")
+            if lastTime is None or lastTime < time:
+                lastTime = time
+            print(filename + " : " + str(time))
+    lastTime = t.strftime("%Y%m%d-%H%M%S", lastTime)
+
+    return "./results/" + dataset + "/" + model_name + "_" + lastTime
+
+def getLastFoldSave(currentPath):
+    lastFold = 0
+
+    for filename in os.listdir(currentPath):
+        if any(i.isdigit() for i in filename):
+            if lastFold < int(filename):
+                lastFold = int(filename)
+
+    return lastFold

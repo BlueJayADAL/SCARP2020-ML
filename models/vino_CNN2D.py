@@ -7,8 +7,7 @@ from models.CNN2D import CNN2D
 from models.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork, IEPlugin
 
-from utils.helper import convertToOneHot, collect_statistics, convertToDefault
-from utils.helper2 import one_hot
+from utils.helper import collect_statistics, convertToDefault
 
 
 class vino_CNN2D:
