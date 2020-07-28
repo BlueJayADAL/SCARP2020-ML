@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.python.keras.models import model_from_json
 from tensorflow.python.keras import backend as K
 from openvino.inference_engine import IECore, IENetwork
-from tensorflow_core.python.keras.optimizers import Adam
+from tensorflow.python.keras.optimizers import Adam
 
 from utils.helper import freeze_session
 

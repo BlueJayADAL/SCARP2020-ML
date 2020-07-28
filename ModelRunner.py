@@ -301,11 +301,6 @@ def main():
                 ml = ModelLoader('model_cnn1d', None)
                 loaded_model = ml.load_keras_model()
                 acc, tpr, far, report = cnn1d_model.load_saved_model(loaded_model)
-                results = open("results.txt", "a")
-                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
-                           str(far), "\n", str(report), "\n\n\n\n"]
-                results.writelines(outputs)
-                results.close()
             else:
                 acc, tpr, far, report = cnn1d_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
@@ -313,6 +308,12 @@ def main():
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle 2D-CNN Model
         elif args.model == 'cnn2d':
@@ -324,12 +325,6 @@ def main():
                 ml = ModelLoader('model_cnn2d', None)
                 loaded_model = ml.load_keras_model()
                 acc, tpr, far, report = cnn2d_model.load_saved_model(loaded_model)
-                results = open("results.txt", "a")
-                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
-                           str(tpr), "\nFAR: ",
-                           str(far), "\n", str(report), "\n\n\n\n"]
-                results.writelines(outputs)
-                results.close()
             else:
                 acc, tpr, far, report = cnn2d_model.train_model(save_model=args.save)
                 cpu_reads.append(p.cpu_percent(interval=None))
@@ -337,6 +332,12 @@ def main():
                 cpu_max = max(cpu_reads)
                 print("Cpu Mean:", cpu_mean)
                 print("Cpu Max:", cpu_max)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nCPU Mean: ", str(cpu_mean),
+                           "\nCPU Max: ", str(cpu_max), "\nAccuracy: ", str(acc), "\nTPR: ", str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
 
         # Handle VINO ANN Model
         elif args.model == 'vinoann':
@@ -347,9 +348,15 @@ def main():
             if args.load:
                 ml = ModelLoader('vino_ann', None)
                 net, execNet = ml.load_vino_model()
-                vino_ann_model.load_saved_model(net, execNet)
+                acc, tpr, far, report = vino_ann_model.load_saved_model(net, execNet)
+                results = open("results.txt", "a")
+                outputs = ["Model: ", args.model, "\nDataset: ", args.dataset, "\nAccuracy: ", str(acc), "\nTPR: ",
+                           str(tpr), "\nFAR: ",
+                           str(far), "\n", str(report), "\n\n\n\n"]
+                results.writelines(outputs)
+                results.close()
             else:
-                acc, tpr, far, report = vino_ann_model.train_model()
+                vino_ann_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -373,7 +380,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                acc, tpr, far, report = vino_rnn_model.train_model()
+                vino_rnn_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
@@ -395,7 +402,7 @@ def main():
                 results.writelines(outputs)
                 results.close()
             else:
-                acc, tpr, far, report = vino_cnn1d_model.train_model()
+                vino_cnn1d_model.train_model()
                 cpu_reads.append(p.cpu_percent(interval=None))
                 cpu_mean = sum(cpu_reads) / len(cpu_reads[1:])
                 cpu_max = max(cpu_reads)
