@@ -242,7 +242,7 @@ class LSTM:
         #raw_inputs = Input(shape=(X_train.shape[1],1,))
         raw_inputs = Input(shape=input_shape)
         if LSTM_layers == 1:
-            xlstm = CuDNNLSTM(LSTM_units, return_sequences=False,
+            xlstm = tf.keras.layers.LSTM(LSTM_units, return_sequences=False,
                         kernel_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         recurrent_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         bias_regularizer=tf.keras.regularizers.l2(lstm_reg),
@@ -250,7 +250,7 @@ class LSTM:
             if dropout_rate != 0:
                 xlstm = Dropout(dropout_rate)(xlstm)        
         else:   
-            xlstm = CuDNNLSTM(LSTM_units, return_sequences=True,
+            xlstm = tf.keras.layers.LSTM(LSTM_units, return_sequences=True,
                         kernel_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         recurrent_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         bias_regularizer=tf.keras.regularizers.l2(lstm_reg),
@@ -259,7 +259,7 @@ class LSTM:
                 xlstm = Dropout(dropout_rate)(xlstm)    
 
             for i in range(1, LSTM_layers-1):
-                xlstm = CuDNNLSTM(LSTM_units, return_sequences=True,
+                xlstm = tf.keras.layers.LSTM(LSTM_units, return_sequences=True,
                             kernel_regularizer=tf.keras.regularizers.l2(lstm_reg),
                             recurrent_regularizer=tf.keras.regularizers.l2(lstm_reg),
                             bias_regularizer=tf.keras.regularizers.l2(lstm_reg),
@@ -267,7 +267,7 @@ class LSTM:
                 if dropout_rate != 0:
                     xlstm = Dropout(dropout_rate)(xlstm)
 
-            xlstm = CuDNNLSTM(LSTM_units, return_sequences=False,
+            xlstm = tf.keras.layers.LSTM(LSTM_units, return_sequences=False,
                         kernel_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         recurrent_regularizer=tf.keras.regularizers.l2(lstm_reg),
                         bias_regularizer=tf.keras.regularizers.l2(lstm_reg),
@@ -349,7 +349,7 @@ class CNN_LSTM:
         if dropout_rate != 0:
             xcnn = Dropout(dropout_rate)(xcnn)  
 
-        xlstm = CuDNNLSTM(LSTM_units, return_sequences=False,
+        xlstm = tf.keras.layers.LSTM(LSTM_units, return_sequences=False,
                     kernel_regularizer=tf.keras.regularizers.l2(lstm_reg),
                     recurrent_regularizer=tf.keras.regularizers.l2(lstm_reg),
                     bias_regularizer=tf.keras.regularizers.l2(lstm_reg),
