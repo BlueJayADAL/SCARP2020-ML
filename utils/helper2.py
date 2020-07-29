@@ -442,9 +442,11 @@ def saveModel(save_dir, model, save_dict, history):
 
 def findLastModelDir(dataset, model_name):
     lastFileDir = getLastModelSave(dataset, model_name)
-    lastFold = getLastFoldSave(lastFileDir)
+    # lastFold = getLastFoldSave(lastFileDir)
+    # return lastFileDir + "/" + str(lastFold) + "/"
 
-    return lastFileDir + "/" + str(lastFold) + "/"
+    return lastFileDir + "/"
+
 
 def getLastModelSave(dataset, model_name):
     """
@@ -461,6 +463,7 @@ def getLastModelSave(dataset, model_name):
     lastTime = t.strftime("%Y%m%d-%H%M%S", lastTime)
 
     return "./results/" + dataset + "/" + model_name + "_" + lastTime
+
 
 def getLastFoldSave(currentPath):
     lastFold = 0

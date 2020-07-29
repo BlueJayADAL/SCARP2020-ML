@@ -1,5 +1,7 @@
 import os
 
+import tensorflow as tf
+
 from models.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork
 
@@ -53,26 +55,14 @@ class vino_CNN_1D:
 
         return convertToDefault(res)
 
+
 class vino_CNN_2D:
     def __init__(self, input_shape, save_dir, load_dir):
         self.input_shape = input_shape
         self.save_dir = save_dir
         self.load_dir = load_dir
 
-
     def train(self):
-        """
-        Loads a CNN2D model to be used for OpenVINO
-        """
-
-        # Clone data from cnn2d model
-        self.X_train_2D = cnn2d_data.X_train_2D
-        self.X_test_2D = cnn2d_data.X_test_2D.reshape(cnn2d_data.X_test_2D.shape[0], 1, 5, 10)
-        self.y_train = cnn2d_data.y_train
-        self.y_test = cnn2d_data.y_test
-
-
-    def train_model(self):
         """
         Loads an CNN2D model to be used for OpenVINO
         """
@@ -101,10 +91,60 @@ class vino_CNN_2D:
         input_blob = next(iter(net.inputs))
         out_blob = next(iter(net.outputs))
 
+        # Transform data to pass in
+        data = data.reshape(self.input_shape[0], self.input_shape[3], self.input_shape[1], self.input_shape[2])
+        print(data.shape)
+
         # Input data into model for predicting
-        res = execNet.infer(inputs={input_blob: self.X_test_2D})
+        res = execNet.infer(inputs={input_blob: data})
 
         # Get prediction results
-        res = res['top_level_output/Softmax']
+        res = res[list(res.keys())[0]]
+
+        return convertToDefault(res)
+
+
+class vino_LSTM:
+    def __init__(self, input_shape, save_dir, load_dir):
+        self.input_shape = input_shape
+        self.save_dir = save_dir
+        self.load_dir = load_dir
+
+    def train(self):
+        """
+        Loads a ANN model to be used for OpenVINO
+        """
+
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        session = tf.Session(config=config)
+
+
+        # Convert ANN model to binary .pb file and save
+        ml = ModelLoader('model', None)
+        loaded_model = ml.load_keras_model(self.load_dir)
+        ml.save_keras_as_vino(self.save_dir)
+
+        # Run OpenVINO's Model Optimizer TensorFlow script (Have script [mo_tf.py] in main directory with DAAL scripts)
+        generateCommand = "mo_tf.py --input_model %smodel.pb --input_shape [%d,%d,%d] --output_dir %s" % (
+            self.save_dir, self.input_shape[0], 128, self.input_shape[1], self.save_dir)
+
+        print(generateCommand)
+        os.system(generateCommand)
+
+    def classify(self, data):
+        # Load vino model
+        ml = ModelLoader('model', None)
+        net, execNet = ml.load_vino_model(load_dir=self.save_dir)
+
+        # Get input and outputs of model
+        input_blob = next(iter(net.inputs))
+        out_blob = next(iter(net.outputs))
+
+        # Input data into model for predicting
+        res = execNet.infer(inputs={input_blob: data})
+
+        # Get prediction results
+        res = res[list(res.keys())[0]]
 
         return convertToDefault(res)

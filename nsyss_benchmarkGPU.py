@@ -10,7 +10,7 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D
+from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM
 from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
 from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
 from utils.sklearn_models import LR, RF, SVM, MLP, kNN
@@ -76,10 +76,6 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
     Performance["preprocessing time"] = t.time()-t_prep
 
-    # Set folds = 1 if vino model
-    if "vino" in modelname:
-        num_folds = 2
-
     # Arrange folds
     skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=42)
     fold_no = 0
@@ -105,15 +101,15 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     clf_reg=1e-4)
 
         elif modelname == "vino_1D_CNN":
-            print("SIZE:", X_train.shape)
-            lastModelDir = findLastModelDir(dataset, "1D_CNN")
+            lastModelDir = findLastModelDir(dataset, "1D_CNN") + str(fold_no) + "/"
+
             model = vino_CNN_1D(input_shape=(X_test.shape[0], X_test.shape[1], 1),
                                 save_dir=save_dir_k + "/",
                                 load_dir=lastModelDir)
 
         elif modelname == "2D_CNN":
             X_train, X_test = matrix_to3D(X_train, X_test)
-            model = CNN_2D(input_shape=(X_train.shape[0],X_train.shape[1],1),
+            model = CNN_2D(input_shape=(X_train.shape[1],X_train.shape[2],1),
                     n_classes=2,                  
                     filters=128, 
                     kernel_size=3,
@@ -123,11 +119,14 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     CNN_layers=2, 
                     clf_reg=1e-4)
 
-            # TODO Still working on finishing this up, will have all vino models converted by tomorrow!
-
         elif modelname == "vino_2D_CNN":
             X_train, X_test = matrix_to3D(X_train, X_test)
-            model = vino_CNN_2D(input_shape=(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1))
+
+            lastModelDir = findLastModelDir(dataset, "2D_CNN") + str(fold_no) + "/"
+
+            model = vino_CNN_2D(input_shape=(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1),
+                                save_dir=save_dir_k + "/",
+                                load_dir=lastModelDir)
 
         elif modelname == "LSTM":
             X_train, X_test = matrix_to3D(X_train, X_test)
@@ -142,6 +141,17 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     LSTM_units=128,
                     lstm_reg=1e-4, 
                     clf_reg=1e-4)
+
+        elif modelname == "vino_LSTM":
+            X_train, X_test = matrix_to3D(X_train, X_test)
+            X_train = X_train.reshape(-1, X_train.shape[1], X_train.shape[2])
+            X_test = X_test.reshape(-1, X_test.shape[1], X_test.shape[2])
+
+            lastModelDir = findLastModelDir(dataset, "LSTM") + str(fold_no) + "/"
+
+            model = vino_LSTM(input_shape=(X_test.shape[1], X_test.shape[2]),
+                              save_dir=save_dir_k + "/",
+                              load_dir=lastModelDir)
         
         elif modelname == "CNN+LSTM":
             # Reference to model : https://www.ieee-security.org/TC/SPW2019/DLS/doc/06-Marin.pdf
@@ -216,14 +226,13 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             # Save the trained model and its hyperparameters
             saveModel(save_dir_k, model.model, save_dict, history)
 
-        elif modelname in ["vino_1D_CNN", "vino_2D_CNN", "vino_LSTM", "vino_CNN+LSTM"]:
+        elif modelname in ["vino_1D_CNN", "vino_2D_CNN", "vino_LSTM", "vino_CNN+LSTM", "vino_ANN"]:
             t_train_0 = t.time()
             model.train()
             Performance["t_train"].append(t.time() - t_train_0)
 
             t_classify_0 = t.time()
 
-            data = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
             ypred = model.classify(X_test)
             Performance["t_classify"].append(t.time() - t_classify_0)
             try:
@@ -331,7 +340,7 @@ def main():
     
     mem_by_model = {}
 
-    modelnames = ["vino_1D_CNN"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
+    modelnames = ["vino_LSTM"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
 
     dataset = "NetML" # NetML or CICIDS2017
 

@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf 
 from tensorflow.keras.utils import plot_model
-from tensorflow.keras.models import Sequential, Model, model_from_json
+from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Dropout, BatchNormalization, Flatten, Conv1D, MaxPooling1D, Conv2D, MaxPooling2D, CuDNNLSTM
 
 def one_hot(y_, n_classes=None):
