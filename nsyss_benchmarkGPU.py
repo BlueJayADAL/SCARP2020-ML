@@ -10,7 +10,7 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM
+from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
 from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
 from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
 from utils.sklearn_models import LR, RF, SVM, MLP, kNN
@@ -149,7 +149,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
             lastModelDir = findLastModelDir(dataset, "LSTM") + str(fold_no) + "/"
 
-            model = vino_LSTM(input_shape=(X_test.shape[1], X_test.shape[2]),
+            model = vino_LSTM(input_shape=(X_test.shape[0], X_test.shape[1], X_test.shape[2]),
                               save_dir=save_dir_k + "/",
                               load_dir=lastModelDir)
         
@@ -160,6 +160,13 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     dropout_rate=0.5, 
                     lstm_reg=1e-4,
                     clf_reg=1e-4)
+
+        elif modelname == "vino_CNN+LSTM":
+            lastModelDir = findLastModelDir(dataset, "CNN+LSTM") + str(fold_no) + "/"
+
+            model = vino_CNN_LSTM(input_shape=(X_test.shape[0], X_test.shape[1], 1),
+                              save_dir=save_dir_k + "/",
+                              load_dir=lastModelDir)
 
         elif modelname == "LR":
             model = LR()
@@ -340,7 +347,7 @@ def main():
     
     mem_by_model = {}
 
-    modelnames = ["vino_LSTM"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
+    modelnames = ["vino_CNN+LSTM"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
 
     dataset = "NetML" # NetML or CICIDS2017
 
