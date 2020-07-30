@@ -1,14 +1,14 @@
 import os
 import time
 
-from models.ModelLoader import ModelLoader
+from models.ANN import ANN
+from utils.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork, IEPlugin
 
-from models.RNN import RNN
 from utils.helper import collect_statistics, convertToDefault
 
 
-class vino_RNN:
+class vino_ANN:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -23,14 +23,14 @@ class vino_RNN:
         Sets X_train, X_test, y_train, y_test, and  variables for training / testing.
         Run this method to reset values
         """
-        # Create rnn model to pull data values from
-        rnn_data = RNN(self.data, self.labels)
+        # Create ann model to pull data values from
+        ann_data = ANN(self.data, self.labels)
 
         # Clone data from ann model
-        self.X_train = rnn_data.X_train
-        self.X_test = rnn_data.X_test
-        self.y_train = rnn_data.y_train
-        self.y_test = rnn_data.y_test
+        self.X_train = ann_data.X_train
+        self.X_test = ann_data.X_test
+        self.y_train = ann_data.y_train
+        self.y_test = ann_data.y_test
 
     def train_model(self,
                     work_dir='models/saved/'):
@@ -43,13 +43,13 @@ class vino_RNN:
         startTime = time.time()
 
         # Convert ANN model to binary .pb file and save
-        ml = ModelLoader('model_rnn', None)
+        ml = ModelLoader('model_ann', None)
         loaded_model = ml.load_keras_model()
         ml.save_keras_as_vino()
 
         # Run OpenVINO's Model Optimizer TensorFlow script (Have script [mo_tf.py] in main directory with DAAL scripts)
-        generateCommand = "mo_tf.py --input_model %svino_rnn.pb --input_shape [%d,%d,%d] --output_dir %s" % (
-            work_dir, len[0], len[1], len[2], work_dir)
+        generateCommand = "mo_tf.py --input_model %svino_ann.pb --input_shape [%d,%d] --output_dir %s" % (
+            work_dir, len[0], len[1], work_dir)
 
         print(generateCommand)
         os.system(generateCommand)
@@ -57,9 +57,9 @@ class vino_RNN:
         # End train timing
         endTime = time.time()
 
-        print("Preparation (VINO Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Preparation (VINO Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
 
-        ml = ModelLoader('vino_rnn', None)
+        ml = ModelLoader('vino_ann', None)
         net, execNet = ml.load_vino_model()
         return self.load_saved_model(net, execNet)
 
@@ -76,7 +76,7 @@ class vino_RNN:
         res = execNet.infer(inputs={input_blob: self.X_test})
 
         # Get prediction results
-        res = res['dense_2/Sigmoid']
+        res = res['dense_3/Sigmoid']
 
         # End testing time
         endTime = time.time()
@@ -84,7 +84,7 @@ class vino_RNN:
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), convertToDefault(res))
 
-        print("Test (VINO Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (VINO Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)

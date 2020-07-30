@@ -4,7 +4,7 @@ import numpy as np
 from _daal4py import logistic_regression_training, logistic_regression_prediction
 
 from utils.helper import collect_statistics
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 
 
 class daal_LR:

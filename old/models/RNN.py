@@ -2,20 +2,14 @@ import time
 
 import numpy as np
 import tensorflow as tf
-
-from tensorflow.keras.layers import Dense, Flatten
-from tensorflow.keras import Sequential, Input
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, TimeDistributed, LSTM
-from tensorflow.keras import Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D
+from tensorflow.keras.layers import LSTM, Dropout, Dense
+from tensorflow.keras.optimizers import Adam
 
 from utils.helper import collect_statistics, convertToDefault
-from models.ModelLoader import ModelLoader
-from utils.helper2 import one_hot
+from utils.ModelLoader import ModelLoader
 
 
-class CNNLSTM\
-:
+class RNN:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -47,65 +41,26 @@ class CNNLSTM\
         self.X_test = self.X_test.reshape(self.X_test.shape[0], 1, self.X_test.shape[1])
 
     def train_model(self,
-                    save_model=True):
-        # Default Training Hyperparameters
-        learning_rate = 1e-3
-        decay_rate = 1e-5
-        dropout_rate = 0.5
-        n_batch = 64
-        n_epochs = 3  # Loop 3 times on the dataset
-        filters = 128
-        kernel_size = 4
-        strides = 1
-        clf_reg = 1e-5
-
-        OUTPUTS = []
-
+              save_model=True):
         # Begin train timing
         startTime = time.time()
 
-        # Create CNN / LSTM classifier
+        # Create ANN classifier
+        model = tf.keras.models.Sequential()
 
-        print(self.X_train.shape)
+        # Add input layer required for interpretation from OpenVINO
+        model.add(LSTM(units=50, input_shape=(self.X_train.shape[1], self.X_train.shape[2]), return_sequences=False))
+        model.add(Dropout(0.2))
 
-        # define CNN model
-        cnn = Sequential()
-        raw_inputs = Input(shape=(1, self.X_train.shape[2]))
-        xcnn = Conv1D(filters, (kernel_size,),
-                      padding='same',
-                      activation='relu',
-                      strides=strides)(raw_inputs)
-        xcnn = MaxPooling1D(pool_size=2, padding='same')(xcnn)
+        model.add(Dense(64, activation='relu'))
+        model.add(Dense(32, activation='relu'))
+        model.add(Dense(1, activation='sigmoid'))
 
-        xcnn = Dense(128, activation='relu',
-                     name='FC1_layer')(xcnn)
-
-        xcnn = Dense(128, activation='relu',
-                     name='FC2_layer')(xcnn)
-
-        # xcnn = Flatten()(xcnn)
-
-        # define LSTM model
-        xcnn = LSTM(units=2, return_sequences=False)(xcnn)
-
-        #xcnn = Flatten()(xcnn)
-
-        top_level_predictions = Dense(2, activation='softmax',
-                                      kernel_regularizer=tf.keras.regularizers.l2(clf_reg),
-                                      bias_regularizer=tf.keras.regularizers.l2(clf_reg),
-                                      activity_regularizer=tf.keras.regularizers.l1(clf_reg),
-                                      name='top_level_output')(xcnn)
-        OUTPUTS.append(top_level_predictions)
-
-        model = Model(inputs=raw_inputs, outputs=OUTPUTS)
-
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
+        model.compile(optimizer=Adam(lr=1e-3, decay=1e-5),
+                      loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
-        history = model.fit(self.X_train, one_hot(self.y_train, 2), batch_size=n_batch,
-                            epochs=n_epochs,
-                            validation_data=(self.X_test, one_hot(self.y_test, 2)))
+        model.fit(self.X_train, self.y_train, epochs=3, batch_size=32, validation_split=0.1)
 
         y_train_pred = model.predict(self.X_train)
         y_test_pred = model.predict(self.X_test)
@@ -116,16 +71,10 @@ class CNNLSTM\
         y_train_pred = convertToDefault(y_train_pred)
         y_test_pred = convertToDefault(y_test_pred)
 
-        print(self.y_train.shape)
-        print(self.y_train.shape)
-        print(y_train_pred.shape)
-        print(y_train_pred)
-
-        # Collect statistics
         train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred)
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred)
 
-        print("Training and testing (Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training and testing (Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -139,7 +88,7 @@ class CNNLSTM\
 
         if save_model:
             # Save model to disk
-            ml = ModelLoader('model_ann', model)
+            ml = ModelLoader('model_rnn', model)
             ml.save_keras_model()
 
         return test_accu, test_tpr, test_far, test_report
@@ -161,11 +110,10 @@ class CNNLSTM\
         endTime = time.time()
 
         y_pred = convertToDefault(y_pred)
-
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
 
-        print("Test (ANN) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)

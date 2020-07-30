@@ -2,15 +2,15 @@ import argparse
 import psutil
 
 from models.CNN1D import CNN1D
-from models.CNN2D import CNN2D
+from old.models.CNN2D import CNN2D
 from models.CNNLSTM import CNNLSTM
 from models.LR import LR
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 from models.RNN import RNN
-from models.daal_DF import daal_DF
-from models.daal_LR import daal_LR
-from models.daal_SVM import daal_SVM
-from models.daal_kNN import daal_kNN
+from old.daal_DF import daal_DF
+from old.daal_LR import daal_LR
+from old.daal_SVM import daal_SVM
+from old.daal_kNN import daal_kNN
 from models.ANN import ANN
 from models.vino_ANN import vino_ANN
 

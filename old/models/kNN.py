@@ -1,13 +1,13 @@
 import time
 import numpy as np
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 
 from utils.helper import collect_statistics
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 
 
-class LR:
+class kNN:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -40,20 +40,19 @@ class LR:
 
     def train_model(self,
                     save_model=True):
-
         nClasses = 2
 
-        # begin train timing
+        # Begin train timing
         startTime = time.time()
 
-        # Create Logistic Regression Classifier
-        logreg = LogisticRegression(penalty='l2', solver='newton-cg', max_iter=1000000, verbose=1)
+        # Create kNN Classifier
+        knn = KNeighborsClassifier()
 
         # Train model
-        logreg.fit(self.X_train, self.y_train)
+        knn.fit(self.X_train, self.y_train)
 
-        y_train_pred = logreg.predict(self.X_train)
-        y_test_pred = logreg.predict(self.X_test)
+        y_train_pred = knn.predict(self.X_train)
+        y_test_pred = knn.predict(self.X_test)
 
         # End train timing
         endTime = time.time()
@@ -75,7 +74,7 @@ class LR:
         print("------------------------")
 
         if save_model:
-            ml = ModelLoader('model_lr', logreg)
+            ml = ModelLoader('model_knn', knn)
             ml.save_sk_daal_model()
 
         return test_accu, test_tpr, test_far, test_report

@@ -1,14 +1,13 @@
 import time
 import numpy as np
-from daal4py.sklearn.svm import SVC
 
-from sklearn.linear_model import LogisticRegression
+from _daal4py import kdtree_knn_classification_training, kdtree_knn_classification_prediction
 
 from utils.helper import collect_statistics
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 
 
-class LR:
+class daal_kNN:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -26,7 +25,6 @@ class LR:
         Run this method to reset values
         """
         # Reshape labels
-        self.data = np.array(self.data)
         self.labels = np.array(self.labels).reshape((len(self.labels), 1))
 
         # Setup train / test data
@@ -35,32 +33,44 @@ class LR:
         upperBound = int(dataLen * mark)
 
         self.X_train = self.data[0:upperBound]
-        self.y_train = self.labels[0:upperBound].flatten()
+        self.y_train = self.labels[0:upperBound]
         self.X_test = self.data[upperBound:]
-        self.y_test = self.labels[upperBound:].flatten()
+        self.y_test = self.labels[upperBound:]
 
     def train_model(self,
                     save_model=True):
+
+        nClasses = 2
+
         # Begin train timing
         startTime = time.time()
 
         # Create Logistic Regression Classifier
-        svm = SVC(C=1e+6, max_iter=1e+7, kernel='rbf', degree=2, gamma='scale', tol=1e-3, cache_size=2000, verbose=True)
+        trainAlg = kdtree_knn_classification_training(nClasses=nClasses)
 
         # Train model
-        svm.fit(self.X_train, self.y_train)
+        trainResult = trainAlg.compute(self.X_train,
+                                       self.y_train)
+        # Create prediction classes 0.
+        predictAlgTrain = kdtree_knn_classification_prediction(nClasses=nClasses, k=2)
+        predictAlgTest = kdtree_knn_classification_prediction(nClasses=nClasses, k=2)
 
-        y_train_pred = svm.predict(self.X_train)
-        y_test_pred = svm.predict(self.X_test)
+        # Make train and test predictions
+        predictResultTrain = predictAlgTrain.compute(self.X_train, trainResult.model)
+        predictResultTest = predictAlgTest.compute(self.X_test, trainResult.model)
 
         # End train timing
         endTime = time.time()
 
-        # Collect statistics
-        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, y_train_pred)
-        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_test_pred)
+        # Flatten y values
+        trainLabel = self.y_train.flatten()
+        testLabel = self.y_test.flatten()
 
-        print("Training and testing (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
+        # Collect statistics
+        train_tpr, train_far, train_accu, train_report = collect_statistics(trainLabel, predictResultTrain.prediction.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
+
+        print("Training and test (K Nearest Neighbors) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -73,7 +83,7 @@ class LR:
         print("------------------------")
 
         if save_model:
-            ml = ModelLoader('model_svm', svm)
+            ml = ModelLoader('daal_knn', trainResult.model)
             ml.save_sk_daal_model()
 
         return test_accu, test_tpr, test_far, test_report
@@ -82,21 +92,26 @@ class LR:
         # Begin test timing
         startTime = time.time()
 
+        # Flatten y
+        testLabel = self.y_test.flatten()
+
+        # Create prediction class
+        predictAlg = kdtree_knn_classification_training(nClasses=2)
+
         # Make predictions
-        y_pred = loaded_model.predict(self.X_test)
+        predictResultTest = predictAlg.compute(self.X_test, loaded_model)
 
         # End test timing
         endTime = time.time()
 
         # Collect statistics
-        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_pred)
+        test_tpr, test_far, test_accu, test_report = collect_statistics(testLabel, predictResultTest.prediction.flatten())
 
-        print("Test (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (K Nearest Neighbors) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)
         print("FAR: ", test_far)
-        print(test_report)
         print("------------------------")
 
         return test_accu, test_tpr, test_far, test_report

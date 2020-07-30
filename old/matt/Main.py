@@ -1,14 +1,13 @@
 import argparse
-import sys
 import os.path
 import time
 
-from matt.models.CNN1D import CNN1D
-from matt.models.CNN2D import CNN2D
-from matt.models.ANN import ANN
-from matt.models.MLP import MLP
-from matt.models.ModelLoader import ModelLoader
-from matt.utils.helper import *
+from old.matt.models.CNN1D import CNN1D
+from old.matt.models.CNN2D import CNN2D
+from old.matt.models.ANN import ANN
+from old.matt.models.MLP import MLP
+from old.matt.models.ModelLoader import ModelLoader
+from old.matt.utils.helper import *
 
 
 def main():

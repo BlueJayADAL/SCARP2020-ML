@@ -1,11 +1,9 @@
-import numpy as np
 import tensorflow as tf
 
-from sklearn import preprocessing, metrics
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 
-from matt.utils.helper import get_training_data
+from old.matt.utils.helper import get_training_data
 
 
 class ANN:

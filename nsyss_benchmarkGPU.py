@@ -2,7 +2,6 @@ import os
 import time as t
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from memory_profiler import memory_usage
 import psutil
@@ -10,11 +9,11 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from utils.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
+from models.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
 from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
-from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
-from utils.sklearn_models import LR, RF, SVM, MLP, kNN
-from utils.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
+from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
+from models.sklearn_models import LR, RF, SVM, MLP, kNN
+from models.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
 
 def matrix_to3D(X_train, X_test):
     dim1 = X_train.shape[1]

@@ -1,13 +1,14 @@
 import time
 import numpy as np
+from daal4py.sklearn.svm import SVC
 
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
 
 from utils.helper import collect_statistics
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 
 
-class kNN:
+class LR:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -40,19 +41,17 @@ class kNN:
 
     def train_model(self,
                     save_model=True):
-        nClasses = 2
-
         # Begin train timing
         startTime = time.time()
 
-        # Create kNN Classifier
-        knn = KNeighborsClassifier()
+        # Create Logistic Regression Classifier
+        svm = SVC(C=1e+6, max_iter=1e+7, kernel='rbf', degree=2, gamma='scale', tol=1e-3, cache_size=2000, verbose=True)
 
         # Train model
-        knn.fit(self.X_train, self.y_train)
+        svm.fit(self.X_train, self.y_train)
 
-        y_train_pred = knn.predict(self.X_train)
-        y_test_pred = knn.predict(self.X_test)
+        y_train_pred = svm.predict(self.X_train)
+        y_test_pred = svm.predict(self.X_test)
 
         # End train timing
         endTime = time.time()
@@ -61,7 +60,7 @@ class kNN:
         train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train, y_train_pred)
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test, y_test_pred)
 
-        print("Training and testing (Logistic Regression) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training and testing (Support Vector Machine) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -74,7 +73,7 @@ class kNN:
         print("------------------------")
 
         if save_model:
-            ml = ModelLoader('model_knn', knn)
+            ml = ModelLoader('model_svm', svm)
             ml.save_sk_daal_model()
 
         return test_accu, test_tpr, test_far, test_report

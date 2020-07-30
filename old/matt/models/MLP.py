@@ -3,7 +3,7 @@ from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 
-from matt.utils.helper import get_training_data
+from old.matt.utils.helper import get_training_data
 
 
 class MLP:

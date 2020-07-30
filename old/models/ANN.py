@@ -2,14 +2,13 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import LSTM, Dropout, Dense
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense, Flatten
 
 from utils.helper import collect_statistics, convertToDefault
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 
 
-class RNN:
+class ANN:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
@@ -37,11 +36,8 @@ class RNN:
         self.X_test = self.data[upperBound:]
         self.y_test = self.labels[upperBound:]
 
-        self.X_train = self.X_train.reshape(self.X_train.shape[0], 1, self.X_train.shape[1])
-        self.X_test = self.X_test.reshape(self.X_test.shape[0], 1, self.X_test.shape[1])
-
     def train_model(self,
-              save_model=True):
+                    save_model=True):
         # Begin train timing
         startTime = time.time()
 
@@ -49,14 +45,14 @@ class RNN:
         model = tf.keras.models.Sequential()
 
         # Add input layer required for interpretation from OpenVINO
-        model.add(LSTM(units=50, input_shape=(self.X_train.shape[1], self.X_train.shape[2]), return_sequences=False))
-        model.add(Dropout(0.2))
+        model.add(Dense(64, input_shape=(self.X_train.shape[1],), activation='relu'))
 
-        model.add(Dense(64, activation='relu'))
-        model.add(Dense(32, activation='relu'))
-        model.add(Dense(1, activation='sigmoid'))
+        model.add(Flatten())
+        model.add(Dense(64, activation=tf.nn.relu))
+        model.add(Dense(32, activation=tf.nn.relu))
+        model.add(Dense(1, activation='sigmoid'))  # Probability distribution
 
-        model.compile(optimizer=Adam(lr=1e-3, decay=1e-5),
+        model.compile(optimizer='adam',
                       loss='binary_crossentropy',  # Tries to minimize loss
                       metrics=['accuracy'])
 
@@ -71,10 +67,11 @@ class RNN:
         y_train_pred = convertToDefault(y_train_pred)
         y_test_pred = convertToDefault(y_test_pred)
 
-        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred)
-        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred)
+        # Collect statistics
+        train_tpr, train_far, train_accu, train_report = collect_statistics(self.y_train.flatten(), y_train_pred.flatten())
+        test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_test_pred.flatten())
 
-        print("Training and testing (Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Training and testing (Artificial Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Training Results ---")
         print("Train accuracy: ", train_accu)
         print("TPR: ", train_tpr)
@@ -88,7 +85,7 @@ class RNN:
 
         if save_model:
             # Save model to disk
-            ml = ModelLoader('model_rnn', model)
+            ml = ModelLoader('model_ann', model)
             ml.save_keras_model()
 
         return test_accu, test_tpr, test_far, test_report
@@ -110,10 +107,11 @@ class RNN:
         endTime = time.time()
 
         y_pred = convertToDefault(y_pred)
+
         # Collect statistics
         test_tpr, test_far, test_accu, test_report = collect_statistics(self.y_test.flatten(), y_pred.flatten())
 
-        print("Test (Recurrent Neural Network) elapsed in %.3f seconds" % (endTime - startTime))
+        print("Test (ANN) elapsed in %.3f seconds" % (endTime - startTime))
         print("--- Testing Results  ---")
         print("Test accuracy: ", test_accu)
         print("TPR: ", test_tpr)

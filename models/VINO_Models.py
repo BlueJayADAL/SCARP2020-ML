@@ -2,7 +2,7 @@ import os
 
 import tensorflow as tf
 
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork
 
 from utils.helper import convertToDefault

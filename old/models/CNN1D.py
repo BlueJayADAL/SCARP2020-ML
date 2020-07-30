@@ -10,7 +10,7 @@ from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dens
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-from models.ModelLoader import ModelLoader
+from utils.ModelLoader import ModelLoader
 from utils.helper import encode_label, convertToDefault, collect_statistics
 from utils.helper2 import one_hot
 
