@@ -459,7 +459,6 @@ def getLastModelSave(dataset, model_name):
             time = t.strptime(time_string, "%Y%m%d-%H%M%S")
             if lastTime is None or lastTime < time:
                 lastTime = time
-            print(filename + " : " + str(time))
     lastTime = t.strftime("%Y%m%d-%H%M%S", lastTime)
 
     return "./results/" + dataset + "/" + model_name + "_" + lastTime

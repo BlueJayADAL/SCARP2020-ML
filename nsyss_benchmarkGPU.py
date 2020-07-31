@@ -1,3 +1,4 @@
+import argparse
 import os
 import time as t
 import numpy as np
@@ -65,7 +66,6 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
     t_prep = t.time()
 
     # Read data
-    #dataset = "NetML" # NetML or CICIDS2017
     df = pd.read_csv("data/"+dataset+"_enc_filtered_top50.csv")
 
     # Standardize the data
@@ -101,6 +101,8 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
         elif modelname == "vino_1D_CNN":
             lastModelDir = findLastModelDir(dataset, "1D_CNN") + str(fold_no) + "/"
+
+            print(X_test.shape)
 
             model = vino_CNN_1D(input_shape=(X_test.shape[0], X_test.shape[1], 1),
                                 save_dir=save_dir_k + "/",
@@ -241,10 +243,9 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
             ypred = model.classify(X_test)
             Performance["t_classify"].append(t.time() - t_classify_0)
-            try:
-                Performance["acc"].append(model.model.score(X_test, y_test))
-            except:  # VINO models don't have score :
-                Performance["acc"].append(np.sum(ypred == y_test) / len(y_train))
+
+            Performance["acc"].append(np.sum(ypred == y_test) / len(y_test))
+
             np.set_printoptions(precision=2)
 
             # Plot normalized confusion matrix
@@ -259,18 +260,6 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
             # Model saving included
 
-            # Save some stuff
-            with open(save_dir_k + '/' + modelname + '.txt', 'w') as file:
-                for k, v in sorted(save_dict.items()):
-                    file.write("{} \t: {}\n".format(k, v))
-                try:
-                    file.write("Train Accuracy \t: {:.5f} \n".format(model.model.score(X_train, y_train)))
-                    file.write("Validation Accuracy \t: {:.5f} \n".format(model.model.score(X_test, y_test)))
-                except:  # VINO models don't have score :
-                    file.write("Train Accuracy \t: {:.5f} \n".format(
-                        np.sum(model.classify(X_train) == y_train) / len(y_train)))
-                    file.write("Validation Accuracy \t: {:.5f} \n".format(np.sum(ypred == y_test) / len(y_test)))
-
         else: # ML model
             t_train_0 = t.time()
             model.train(X_train, y_train)
@@ -282,7 +271,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             try:
                 Performance["acc"].append(model.model.score(X_test, y_test))
             except: # DAAL models don't have score :
-                Performance["acc"].append(np.sum(ypred == y_test)/len(y_train))
+                Performance["acc"].append(np.sum(ypred == y_test)/len(y_test))
             np.set_printoptions(precision=2)
 
             # Plot normalized confusion matrix
@@ -308,7 +297,6 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     file.write("Train Accuracy \t: {:.5f} \n".format(np.sum(model.classify(X_train) == y_train)/len(y_train)))
                     file.write("Validation Accuracy \t: {:.5f} \n".format(np.sum(ypred == y_test)/len(y_test)))
 
-
     Performance["t_train_mean"] = sum(Performance["t_train"])/len(Performance["t_train"])
     Performance["t_classify_mean"] = sum(Performance["t_classify"])/len(Performance["t_classify"])
     Performance["acc_mean"] = sum(Performance["acc"])/len(Performance["acc"])
@@ -324,43 +312,66 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="SCARP Project Model Run Command", add_help=True)
+    parser.add_argument('-d', '--dataset', action="store", help="Dataset")
+    parser.add_argument('-m', '--model', action="store", nargs="+",  help="Model")
+    parser.add_argument('-k', '--kfolds', action="store", help="How many times to run each model?")
+    args = parser.parse_args()
 
-    save_dict = {}
-    save_dict['CNN_layers'] = CNN_layers
-    save_dict['filters'] = filters
-    save_dict['kernel_size'] = kernel_size
-    save_dict['strides'] = strides
-    save_dict['clf_reg'] = clf_reg
-    save_dict['dropout_rate'] = dropout_rate
-    save_dict['learning_rate'] = learning_rate
-    save_dict['decay_rate'] = decay_rate
-    save_dict['n_batch'] = n_batch
-    save_dict['n_epochs'] = n_epochs
-    save_dict['n_neighbors'] = n_neighbors
-    save_dict['n_estimators'] = n_estimators
-    save_dict['max_depth'] = max_depth
-    save_dict['C'] = C
-    save_dict['svm_kernel'] = svm_kernel
-    save_dict['mlp_solver'] = mlp_solver
-    save_dict['mlp_hidden_units'] = mlp_hidden_units
-    
-    mem_by_model = {}
+    if args.dataset is None or args.dataset not in ["NetML", "CICIDS2017"]:
+        # Check if arguments contain valid dataset
 
-    modelnames = ["vino_CNN+LSTM"] # 1D_CNN 2D_CNN LSTM CNN+LSTM
+        print("No valid dataset set found: {NetML, CICIDS2017}. e.g. --dataset NetML")
+        return
+    elif args.kfolds is None:
+        # Check if arguments contain valid amount of k folds
 
-    dataset = "NetML" # NetML or CICIDS2017
+        print("Please select a valid amount of kfolds: {1, 2, 3...etc}. e.g. --kfolds 10")
+        return
+    else:
+        # Check if arguments contain valid model(s)
 
-    
+        for model in args.model:
+            if model not in ["LR","daal_LR","kNN","daal_kNN","RF","daal_DF","SVM","daal_SVM", "MLP", "1D_CNN","vino_1D_CNN",
+                             "2D_CNN","vino_2D_CNN","LSTM","vino_LSTM","CNN+LSTM","vino_CNN+LSTM"]:
+                print("Please select one of these for model: {LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM ,daal_SVM,"
+                      " MLP, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN,"
+                      " LSTM, vino_LSTM, CNN+LSTM, vino_CNN+LSTM}. e.g. --model lr")
+                return
 
-    for modelname in modelnames:
-        # Create folder for the results
-        time_ = t.strftime("%Y%m%d-%H%M%S")
-        save_dir = os.getcwd() + '/results/' + dataset + '/' + modelname + '_' + time_
-        os.makedirs(save_dir)
-        with open(save_dir + "/memory_usage.txt", "w") as fp:
-            mem_by_model[modelname] = memory_usage((profile, (dataset, modelname, save_dict, save_dir, 2)))
-            fp.write("AverageMem,{}MB\n".format(sum(mem_by_model[modelname])/len(mem_by_model[modelname])))
-            fp.write("MaxMem,{}MB\n".format(max(mem_by_model[modelname])))
+        save_dict = {}
+        save_dict['CNN_layers'] = CNN_layers
+        save_dict['filters'] = filters
+        save_dict['kernel_size'] = kernel_size
+        save_dict['strides'] = strides
+        save_dict['clf_reg'] = clf_reg
+        save_dict['dropout_rate'] = dropout_rate
+        save_dict['learning_rate'] = learning_rate
+        save_dict['decay_rate'] = decay_rate
+        save_dict['n_batch'] = n_batch
+        save_dict['n_epochs'] = n_epochs
+        save_dict['n_neighbors'] = n_neighbors
+        save_dict['n_estimators'] = n_estimators
+        save_dict['max_depth'] = max_depth
+        save_dict['C'] = C
+        save_dict['svm_kernel'] = svm_kernel
+        save_dict['mlp_solver'] = mlp_solver
+        save_dict['mlp_hidden_units'] = mlp_hidden_units
+
+        mem_by_model = {}
+
+        dataset = args.dataset
+        kfolds = int(args.kfolds)
+
+        for modelname in args.model:
+            # Create folder for the results
+            time_ = t.strftime("%Y%m%d-%H%M%S")
+            save_dir = os.getcwd() + '/results/' + dataset + '/' + modelname + '_' + time_
+            os.makedirs(save_dir)
+            with open(save_dir + "/memory_usage.txt", "w") as fp:
+                mem_by_model[modelname] = memory_usage((profile, (dataset, modelname, save_dict, save_dir, kfolds)))
+                fp.write("AverageMem,{}MB\n".format(sum(mem_by_model[modelname]) / len(mem_by_model[modelname])))
+                fp.write("MaxMem,{}MB\n".format(max(mem_by_model[modelname])))
 
 
 if __name__ == '__main__':
