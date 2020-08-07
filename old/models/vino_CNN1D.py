@@ -8,7 +8,7 @@ from utils.ModelLoader import ModelLoader
 from openvino.inference_engine import IECore, IENetwork
 
 from utils.helper import convertToOneHot, collect_statistics, convertToDefault
-from utils.helper2 import one_hot
+from utils.helper import one_hot
 
 
 class vino_CNN1D:

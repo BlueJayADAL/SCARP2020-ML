@@ -12,9 +12,9 @@ This is a joint project worked on by the following individuals from the Universi
 	* Onur Barut - Programmer
 
 ## Walkthrough Guide
-1. Currently there is one main runnable file (nsyss_benchmarkGPU.py). A sample command can be found below with respective arguments for running.
+1. Currently there is one main runnable file (nsyss_benchmark.py). A sample command can be found below with respective arguments for running.
 
-`python nsyss_benchmarkGPU.py --dataset NetML --model LR daal_LR --kfolds 10`
+`python nsyss_benchmark.py --dataset NetML --model LR daal_LR --kfolds 10`
 
 - -d, --dataset [DATASET]: Specifies which dataset to use (supported: NetML, CICIDS)
 - -m, --model [MODELTYPE]: Specifies which model to use (supported: LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM ,daal_SVM, MLP, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN, LSTM, vino_LSTM, CNN+LSTM, vino_CNN+LSTM)
@@ -53,6 +53,24 @@ The profiler also keeps tabs on how much memory is utilized along with training 
 
 Finally, once a model is finished it is saved in the results folder in either NetML or CICIDS2017 folder and is categorized by the starttime when the model began running.
 A list of final performance results can be found in the final model folder with average performance statistics.
+
+Some benchmark commands are also provided in order to test various aspects of the program. See more example commands below.
+
+With NetML dataset:
+
+* Run all ML / DAAL models: 
+`python nsyss_benchmark.py --dataset NetML --model LR daal_LR RF daal_DF SVM daal_SVM kNN daal_kNN --kfolds 10`
+
+* Run all DL / VINO models: 
+`python nsyss_benchmark.py --dataset NetML --model ANN vino_ANN LSTM vino_LSTM CNN+LSTM vino_CNN+LSTM 1D_CNN vino_1D_CNN 2D_CNN vino_2D_CNN --kfolds 10`
+
+With CICIDS2017 dataset:
+
+* Run all ML / DAAL models: 
+`python nsyss_benchmark.py --dataset CICIDS2017 --model LR daal_LR RF daal_DF SVM daal_SVM kNN daal_kNN --kfolds 10`
+
+* Run all DL / VINO models: 
+`python nsyss_benchmark.py --dataset CICIDS2017 --model ANN vino_ANN LSTM vino_LSTM CNN+LSTM vino_CNN+LSTM 1D_CNN vino_1D_CNN 2D_CNN vino_2D_CNN --kfolds 10`
 
 ## Additional Resources
 ### daal4py Documentation Home

@@ -10,11 +10,12 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from models.VINO_Models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
-from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
-from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
+from models.vino_models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM, vino_ANN
+from utils.helper import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
+from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM, ANN
 from models.sklearn_models import LR, RF, SVM, MLP, kNN
 from models.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
+
 
 def matrix_to3D(X_train, X_test):
     dim1 = X_train.shape[1]
@@ -48,6 +49,7 @@ C = 1.0             # SVM
 svm_kernel = 'rbf'  # SVM
 mlp_solver = 'adam'     # MLP
 mlp_hidden_units = 128  # MLP
+
 
 #@profile
 def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
@@ -88,7 +90,27 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
         y_train, y_test = y[train_index], y[test_index]
 
         # Init the model
-        if modelname == "1D_CNN":
+        if modelname == "ANN":
+            X_train = X_train.reshape(-1, X_train.shape[1], 1)
+            X_test = X_test.reshape(-1, X_test.shape[1], 1)
+
+            model = ANN(input_shape=(X_train.shape[1],1,),
+                    n_classes=2,
+                    dense_units=mlp_hidden_units,
+                    dropout_rate=dropout_rate,
+                    clf_reg=clf_reg)
+
+        elif modelname == "vino_ANN":
+            X_train = X_train.reshape(-1, X_train.shape[1], 1)
+            X_test = X_test.reshape(-1, X_test.shape[1], 1)
+
+            lastModelDir = findLastModelDir(dataset, "ANN") + str(fold_no) + "/"
+
+            model = vino_ANN(input_shape=(X_test.shape[0], X_test.shape[1], 1),
+                                save_dir=save_dir_k + "/",
+                                load_dir=lastModelDir)
+
+        elif modelname == "1D_CNN":
             model = CNN_1D(input_shape=(X_train.shape[1],1,), 
                     n_classes=2,                  
                     filters=128, 
@@ -110,6 +132,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
         elif modelname == "2D_CNN":
             X_train, X_test = matrix_to3D(X_train, X_test)
+
             model = CNN_2D(input_shape=(X_train.shape[1],X_train.shape[2],1),
                     n_classes=2,                  
                     filters=128, 
@@ -196,7 +219,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             return
 
         # Train the model
-        if modelname in ["1D_CNN", "2D_CNN", "LSTM", "CNN+LSTM"]:
+        if modelname in ["ANN", "1D_CNN", "2D_CNN", "LSTM", "CNN+LSTM"]:
             t_train_0 = t.time()
             history=model.train(X_train, y_train, X_test, y_test,
                                 n_batch, 
@@ -234,7 +257,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             # Save the trained model and its hyperparameters
             saveModel(save_dir_k, model.model, save_dict, history)
 
-        elif modelname in ["vino_1D_CNN", "vino_2D_CNN", "vino_LSTM", "vino_CNN+LSTM", "vino_ANN"]:
+        elif modelname in ["vino_ANN", "vino_1D_CNN", "vino_2D_CNN", "vino_LSTM", "vino_CNN+LSTM"]:
             t_train_0 = t.time()
             model.train()
             Performance["t_train"].append(t.time() - t_train_0)
@@ -332,10 +355,11 @@ def main():
         # Check if arguments contain valid model(s)
 
         for model in args.model:
-            if model not in ["LR","daal_LR","kNN","daal_kNN","RF","daal_DF","SVM","daal_SVM", "MLP", "1D_CNN","vino_1D_CNN",
-                             "2D_CNN","vino_2D_CNN","LSTM","vino_LSTM","CNN+LSTM","vino_CNN+LSTM"]:
-                print("Please select one of these for model: {LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM ,daal_SVM,"
-                      " MLP, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN,"
+            if model not in ["LR", "daal_LR", "kNN", "daal_kNN", "RF", "daal_DF", "SVM", "daal_SVM", "MLP", "ANN",
+                             "vino_ANN", "1D_CNN", "vino_1D_CNN", "2D_CNN", "vino_2D_CNN", "LSTM", "vino_LSTM",
+                             "CNN+LSTM", "vino_CNN+LSTM"]:
+                print("Please select one of these for model: {LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM, daal_SVM,"
+                      " MLP, ANN, vino_ANN, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN,"
                       " LSTM, vino_LSTM, CNN+LSTM, vino_CNN+LSTM}. e.g. --model lr")
                 return
 

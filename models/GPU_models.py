@@ -2,7 +2,8 @@ import numpy as np
 import tensorflow as tf 
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Dense, Dropout, BatchNormalization, Flatten, Conv1D, MaxPooling1D, Conv2D, MaxPooling2D, CuDNNLSTM
+from tensorflow.keras.layers import Input, Dense, Dropout, BatchNormalization, Flatten, Conv1D, MaxPooling1D, Conv2D,\
+    MaxPooling2D
 
 def one_hot(y_, n_classes=None):
     # Function to encode neural one-hot output labels from number indexes
@@ -13,6 +14,61 @@ def one_hot(y_, n_classes=None):
         n_classes = int(int(max(y_))+1)
     y_ = y_.reshape(len(y_))
     return np.eye(n_classes)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
+
+
+class ANN:
+    """docstring for ANN"""
+
+    def __init__(self, input_shape,
+                 n_classes,
+                 dense_units=128,
+                 dropout_rate=0.,
+                 clf_reg=1e-4):
+        # Model Definition
+        # raw_inputs = Input(shape=(X_train.shape[1],1,))
+        raw_inputs = Input(shape=input_shape)
+
+        xann = Dense(dense_units, activation='relu',
+                     kernel_regularizer=tf.keras.regularizers.l2(clf_reg),
+                     bias_regularizer=tf.keras.regularizers.l2(clf_reg),
+                     activity_regularizer=tf.keras.regularizers.l1(clf_reg),
+                     name='FC1_layer')(raw_inputs)
+
+        if dropout_rate != 0:
+            xann = Dropout(dropout_rate)(xann)
+
+        # we flatten for dense layer
+        xann = Flatten()(xann)
+
+        top_level_predictions = Dense(n_classes, activation='softmax',
+                                      kernel_regularizer=tf.keras.regularizers.l2(clf_reg),
+                                      bias_regularizer=tf.keras.regularizers.l2(clf_reg),
+                                      activity_regularizer=tf.keras.regularizers.l1(clf_reg),
+                                      name='top_level_output')(xann)
+
+        model = Model(inputs=raw_inputs, outputs=top_level_predictions)
+        self.model = model
+        self.n_classes = n_classes
+
+    def train(self, X_train, y_train, X_val, y_val, n_batch, n_epochs, learning_rate, decay_rate, save_dir):
+        print(self.model.summary())  # summarize layers
+        plot_model(self.model, to_file=save_dir + '/model.png')  # plot graph
+        self.model.compile(loss='categorical_crossentropy',
+                           optimizer=tf.keras.optimizers.Adam(lr=learning_rate, decay=decay_rate),
+                           metrics=['accuracy'])
+        # Train the model
+        return self.model.fit(X_train, one_hot(y_train, self.n_classes),
+                              batch_size=n_batch,
+                              epochs=n_epochs,
+                              validation_data=(X_val, one_hot(y_val, self.n_classes)))
+
+    def classify(self, data):
+        if len(data.shape) < 3:
+            X_test_1D = data.reshape(-1, data.shape[1], 1)
+        else:
+            X_test_1D = data
+
+        return self.model.predict(X_test_1D)
 
 
 class CNN_1D:

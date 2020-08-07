@@ -10,7 +10,7 @@ from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import Conv1D, MaxPooling1D, Dropout, Flatten, Dense
 from tensorflow.python.keras.models import Model
 
-from utils.helper2 import read_dataset, one_hot
+from utils.helper import read_dataset, one_hot
 
 
 class CNN1D:

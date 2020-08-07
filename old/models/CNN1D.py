@@ -12,7 +12,7 @@ from tensorflow.keras.optimizers import Adam
 
 from utils.ModelLoader import ModelLoader
 from utils.helper import encode_label, convertToDefault, collect_statistics
-from utils.helper2 import one_hot
+from utils.helper import one_hot
 
 
 class CNN1D:

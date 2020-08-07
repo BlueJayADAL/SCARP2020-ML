@@ -7,7 +7,7 @@ import psutil
 
 from sklearn.model_selection import StratifiedKFold
 
-from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, read_raw_from_csv
+from utils.helper import plot_confusion_matrix, plotLoss, saveModel, read_raw_from_csv
 from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM
 from models.sklearn_models import LR, RF, SVM, MLP, kNN
 

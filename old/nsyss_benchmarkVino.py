@@ -9,11 +9,11 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
-from utils.vino_models import vino_ANN, vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
-from utils.helper2 import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
-from utils.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM, ANN
-from utils.sklearn_models import LR, RF, SVM, MLP, kNN
-from utils.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
+from models.vino_models import vino_ANN, vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM
+from utils.helper import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
+from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM, ANN
+from models.sklearn_models import LR, RF, SVM, MLP, kNN
+from models.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
 
 def matrix_to3D(X_train, X_test):
     dim1 = X_train.shape[1]
@@ -97,7 +97,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                     n_classes=2,                  
                     dense_units=mlp_hidden_units,
                     dropout_rate=dropout_rate, 
-                    clf_reg=clf_reg)   
+                    clf_reg=clf_reg)
 
 
         elif modelname == "1D_CNN":

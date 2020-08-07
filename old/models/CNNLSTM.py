@@ -11,7 +11,7 @@ from tensorflow.keras.layers import Conv1D, MaxPooling1D
 
 from utils.helper import collect_statistics, convertToDefault
 from utils.ModelLoader import ModelLoader
-from utils.helper2 import one_hot
+from utils.helper import one_hot
 
 
 class CNNLSTM\
