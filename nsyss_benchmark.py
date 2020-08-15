@@ -153,18 +153,6 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                                 save_dir=save_dir_k + "/",
                                 load_dir=lastModelDir)
 
-        elif modelname == "AlexNet":
-            X_train, X_test = matrix_to3D(X_train, X_test)
-
-            model = AlexNet(input_shape=(X_train.shape[1], X_train.shape[2], 1),
-                           n_classes=2,
-                           filters=filters,
-                           kernel_size=kernel_size,
-                           strides=strides,
-                           dense_units=128,
-                           dropout_rate=dropout_rate,
-                           clf_reg=clf_reg)
-
         elif modelname == "LSTM":
             X_train, X_test = matrix_to3D(X_train, X_test)
             X_train = X_train.reshape(-1, X_train.shape[1], X_train.shape[2])
@@ -232,7 +220,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             return
 
         # Train the model
-        if modelname in ["ANN", "1D_CNN", "2D_CNN", "AlexNet", "LSTM", "CNN+LSTM"]:
+        if modelname in ["ANN", "1D_CNN", "2D_CNN", "LSTM", "CNN+LSTM"]:
             t_train_0 = t.time()
             history=model.train(X_train, y_train, X_test, y_test,
                                 n_batch, 
@@ -369,10 +357,10 @@ def main():
 
         for model in args.model:
             if model not in ["LR", "daal_LR", "kNN", "daal_kNN", "RF", "daal_DF", "SVM", "daal_SVM", "MLP", "ANN",
-                             "vino_ANN", "1D_CNN", "vino_1D_CNN", "2D_CNN", "vino_2D_CNN", "AlexNet", "LSTM", "vino_LSTM",
+                             "vino_ANN", "1D_CNN", "vino_1D_CNN", "2D_CNN", "vino_2D_CNN", "LSTM", "vino_LSTM",
                              "CNN+LSTM", "vino_CNN+LSTM"]:
                 print("Please select one of these for model: {LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM, daal_SVM,"
-                      " MLP, ANN, vino_ANN, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN, AlexNet,"
+                      " MLP, ANN, vino_ANN, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN,"
                       " LSTM, vino_LSTM, CNN+LSTM, vino_CNN+LSTM}. e.g. --model lr")
                 return
 
