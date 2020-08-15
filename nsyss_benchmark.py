@@ -10,8 +10,9 @@ import psutil
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
+from old.models.CNN_Variants import AlexNet
 from models.vino_models import vino_CNN_1D, vino_CNN_2D, vino_LSTM, vino_CNN_LSTM, vino_ANN
-from utils.helper import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir
+from utils.helper import plot_confusion_matrix, plotLoss, saveModel, findLastModelDir, getHyperParameters
 from models.GPU_models import CNN_1D, CNN_2D, LSTM, CNN_LSTM, ANN
 from models.sklearn_models import LR, RF, SVM, MLP, kNN
 from models.daal4py_models import daal_LR, daal_DF, daal_SVM, daal_kNN
@@ -42,12 +43,12 @@ strides = 1
 CNN_layers = 2
 clf_reg = 1e-5
 # ML parameters
-n_neighbors = 5     # kNN
+n_neighbors = 5  # kNN
 n_estimators = 100  # RF
-max_depth = 10      # RF
-C = 1.0             # SVM
+max_depth = 10  # RF
+C = 1.0  # SVM
 svm_kernel = 'rbf'  # SVM
-mlp_solver = 'adam'     # MLP
+mlp_solver = 'adam'  # MLP
 mlp_hidden_units = 128  # MLP
 
 
@@ -112,14 +113,14 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
 
         elif modelname == "1D_CNN":
             model = CNN_1D(input_shape=(X_train.shape[1],1,), 
-                    n_classes=2,                  
-                    filters=128, 
-                    kernel_size=3,
-                    strides=1,
+                    n_classes=2,
+                    filters=filters,
+                    kernel_size=kernel_size,
+                    strides=strides,
                     dense_units=128,
-                    dropout_rate=0.5, 
-                    CNN_layers=2, 
-                    clf_reg=1e-4)
+                    dropout_rate=dropout_rate,
+                    CNN_layers=CNN_layers,
+                    clf_reg=clf_reg)
 
         elif modelname == "vino_1D_CNN":
             lastModelDir = findLastModelDir(dataset, "1D_CNN") + str(fold_no) + "/"
@@ -134,14 +135,14 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             X_train, X_test = matrix_to3D(X_train, X_test)
 
             model = CNN_2D(input_shape=(X_train.shape[1],X_train.shape[2],1),
-                    n_classes=2,                  
-                    filters=128, 
-                    kernel_size=3,
-                    strides=1,
+                    n_classes=2,
+                    filters=filters,
+                    kernel_size=kernel_size,
+                    strides=strides,
                     dense_units=128,
-                    dropout_rate=0.5, 
-                    CNN_layers=2, 
-                    clf_reg=1e-4)
+                    dropout_rate=dropout_rate,
+                    CNN_layers=CNN_layers,
+                    clf_reg=clf_reg)
 
         elif modelname == "vino_2D_CNN":
             X_train, X_test = matrix_to3D(X_train, X_test)
@@ -152,19 +153,31 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
                                 save_dir=save_dir_k + "/",
                                 load_dir=lastModelDir)
 
+        elif modelname == "AlexNet":
+            X_train, X_test = matrix_to3D(X_train, X_test)
+
+            model = AlexNet(input_shape=(X_train.shape[1], X_train.shape[2], 1),
+                           n_classes=2,
+                           filters=filters,
+                           kernel_size=kernel_size,
+                           strides=strides,
+                           dense_units=128,
+                           dropout_rate=dropout_rate,
+                           clf_reg=clf_reg)
+
         elif modelname == "LSTM":
             X_train, X_test = matrix_to3D(X_train, X_test)
             X_train = X_train.reshape(-1, X_train.shape[1], X_train.shape[2])
             X_test = X_test.reshape(-1, X_test.shape[1], X_test.shape[2])
 
             model = LSTM(input_shape=(X_train.shape[1],X_train.shape[2]), 
-                    n_classes=2,                  
+                    n_classes=2,
                     dense_units=128,
-                    dropout_rate=0.5, 
+                    dropout_rate=dropout_rate,
                     LSTM_layers=2,
                     LSTM_units=128,
-                    lstm_reg=1e-4, 
-                    clf_reg=1e-4)
+                    lstm_reg=1e-4,
+                    clf_reg=clf_reg)
 
         elif modelname == "vino_LSTM":
             X_train, X_test = matrix_to3D(X_train, X_test)
@@ -180,10 +193,10 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
         elif modelname == "CNN+LSTM":
             # Reference to model : https://www.ieee-security.org/TC/SPW2019/DLS/doc/06-Marin.pdf
             model = CNN_LSTM(input_shape=(X_train.shape[1],1,), # Model of "Deep in the Dark paper"
-                    n_classes=2,                  
-                    dropout_rate=0.5, 
+                    n_classes=2,
+                    dropout_rate=dropout_rate,
                     lstm_reg=1e-4,
-                    clf_reg=1e-4)
+                    clf_reg=clf_reg)
 
         elif modelname == "vino_CNN+LSTM":
             lastModelDir = findLastModelDir(dataset, "CNN+LSTM") + str(fold_no) + "/"
@@ -219,7 +232,7 @@ def profile(dataset, modelname, save_dict, save_dir, num_folds=10):
             return
 
         # Train the model
-        if modelname in ["ANN", "1D_CNN", "2D_CNN", "LSTM", "CNN+LSTM"]:
+        if modelname in ["ANN", "1D_CNN", "2D_CNN", "AlexNet", "LSTM", "CNN+LSTM"]:
             t_train_0 = t.time()
             history=model.train(X_train, y_train, X_test, y_test,
                                 n_batch, 
@@ -356,31 +369,12 @@ def main():
 
         for model in args.model:
             if model not in ["LR", "daal_LR", "kNN", "daal_kNN", "RF", "daal_DF", "SVM", "daal_SVM", "MLP", "ANN",
-                             "vino_ANN", "1D_CNN", "vino_1D_CNN", "2D_CNN", "vino_2D_CNN", "LSTM", "vino_LSTM",
+                             "vino_ANN", "1D_CNN", "vino_1D_CNN", "2D_CNN", "vino_2D_CNN", "AlexNet", "LSTM", "vino_LSTM",
                              "CNN+LSTM", "vino_CNN+LSTM"]:
                 print("Please select one of these for model: {LR, daal_LR, kNN, daal_kNN, RF, daal_DF, SVM, daal_SVM,"
-                      " MLP, ANN, vino_ANN, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN,"
+                      " MLP, ANN, vino_ANN, 1D_CNN, vino_1D_CNN, 2D_CNN, vino_2D_CNN, AlexNet,"
                       " LSTM, vino_LSTM, CNN+LSTM, vino_CNN+LSTM}. e.g. --model lr")
                 return
-
-        save_dict = {}
-        save_dict['CNN_layers'] = CNN_layers
-        save_dict['filters'] = filters
-        save_dict['kernel_size'] = kernel_size
-        save_dict['strides'] = strides
-        save_dict['clf_reg'] = clf_reg
-        save_dict['dropout_rate'] = dropout_rate
-        save_dict['learning_rate'] = learning_rate
-        save_dict['decay_rate'] = decay_rate
-        save_dict['n_batch'] = n_batch
-        save_dict['n_epochs'] = n_epochs
-        save_dict['n_neighbors'] = n_neighbors
-        save_dict['n_estimators'] = n_estimators
-        save_dict['max_depth'] = max_depth
-        save_dict['C'] = C
-        save_dict['svm_kernel'] = svm_kernel
-        save_dict['mlp_solver'] = mlp_solver
-        save_dict['mlp_hidden_units'] = mlp_hidden_units
 
         mem_by_model = {}
 
@@ -388,6 +382,40 @@ def main():
         kfolds = int(args.kfolds)
 
         for modelname in args.model:
+            # Get best hyper parameters for model
+            params = getHyperParameters(modelname)
+
+            # Set global param variables for model
+            learning_rate = params[0]
+            decay_rate = params[1]
+            dropout_rate = params[2]
+            n_batch = params[3]
+            n_epochs = params[4]
+            filters = params[5]
+            kernel_size = params[6]
+            strides = params[7]
+            CNN_layers = params[8]
+            clf_reg = params[9]
+
+            save_dict = {}
+            save_dict['CNN_layers'] = CNN_layers
+            save_dict['filters'] = filters
+            save_dict['kernel_size'] = kernel_size
+            save_dict['strides'] = strides
+            save_dict['clf_reg'] = clf_reg
+            save_dict['dropout_rate'] = dropout_rate
+            save_dict['learning_rate'] = learning_rate
+            save_dict['decay_rate'] = decay_rate
+            save_dict['n_batch'] = n_batch
+            save_dict['n_epochs'] = n_epochs
+            save_dict['n_neighbors'] = n_neighbors
+            save_dict['n_estimators'] = n_estimators
+            save_dict['max_depth'] = max_depth
+            save_dict['C'] = C
+            save_dict['svm_kernel'] = svm_kernel
+            save_dict['mlp_solver'] = mlp_solver
+            save_dict['mlp_hidden_units'] = mlp_hidden_units
+
             # Create folder for the results
             time_ = t.strftime("%Y%m%d-%H%M%S")
             save_dir = os.getcwd() + '/results/' + dataset + '/' + modelname + '_' + time_
