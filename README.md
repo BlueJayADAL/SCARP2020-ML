@@ -4,20 +4,23 @@ The repository for SCARP 2020 on Network Traffic Analytics.
 
 __If you are using our code, please cite our papers -->__
 
-[1] Onur Barut, Matthew Grohotolski, Connor DiLeo, Yan Luo, Peilong Li, and Tong Zhang. 2020. Machine Learning Based Malware Detection on Encrypted Traffic: A Comprehensive Performance Study. In 7th International Conference on Networking, Systems and Security (7th NSysS 2020), December 22–24, 2020, Dhaka, Bangladesh. ACM, New York, NY, USA 9 Pages. https://doi.org/10.1145/3428363.3428365
+`[1] Onur Barut, Matthew Grohotolski, Connor DiLeo, Yan Luo, Peilong Li, and Tong Zhang. 2020. Machine Learning Based Malware Detection on Encrypted Traffic: A Comprehensive Performance Study. In 7th International Conference on Networking, Systems and Security (7th NSysS 2020), December 22–24, 2020, Dhaka, Bangladesh. ACM, New York, NY, USA 9 Pages. https://doi.org/10.1145/3428363.3428365`
 
-[2] Derek Manning, Peilong Li, Xiaoban Wu, Yan Luo, Tong Zhang, Weigang Li. 2020. ACETA: Accelerating Encrypted Traffic Analytics on Network Edge. In ICC 2020-2020 IEEE International Conference on Communications (ICC), pp. 1-6.
+`[2] Derek Manning, Peilong Li, Xiaoban Wu, Yan Luo, Tong Zhang, Weigang Li. 2020. ACETA: Accelerating Encrypted Traffic Analytics on Network Edge. In ICC 2020-2020 IEEE International Conference on Communications (ICC), pp. 1-6.`
 
 
 The project is codenamed **ANTA** for Accelerated Network Traffic Analytics.
 
 This is a joint project worked on by the following individuals from the Universities specified below:
 * Elizabethtown College (Elizabethtown, PA)
-	* Dr. Li - Advisor of Project
-	* Matthew Grohotolski - Programmer
-	* Connor DiLeo - Programmer
+	* Dr. Peilong Li - Advisor of the project
+	* Matthew Grohotolski - Student researcher
+	* Connor DiLeo - Student researcher
 * University of Massachusetts Lowell (Lowell, MA)
-	* Onur Barut - Programmer
+	* Dr. Yan Luo - Advisor of the project	
+	* Onur Barut - Student researcher
+* Intel Corp. 
+	* Tong Zhang - Co-advisor of the project 	
 
 ## Walkthrough Guide
 1. Currently there is one main runnable file (nsyss_benchmark.py). A sample command can be found below with respective arguments for running.
